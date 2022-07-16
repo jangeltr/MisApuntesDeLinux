@@ -2,9 +2,32 @@
  
 //Agregrando firewall y abriendo puerto para mysql
 apt install ufw
-sudo ufw status
+sudo ufw status				//para ver el estado y reglas activas en el firewall
+sudo ufw status	numbered		//para que las muestre numeradas
 ufw allow mysql
 ufw allow 22 comment 'ssh'
 ufw allow 3000 comment 'Apache'
-ufw allow 4000 comment 'CodeS'
+ufw allow 4000 comment 'CodeServer'
+ufw allow from IPEspecifica proto tcp to any port 22
+ufw delete 2				//para borrar la entrada numerada con 2
+sudo ufw enable
 sudo service ufw restart
+sudo ufw reset				//desactiva el firewall
+
+
+puerto 22				//ssh
+puerto 80				//http
+puerto 443				//https
+
+
+nmap -sV -sC -O -oA archivoSalida IPdelServer	//Para realizar un escaneo de puertos, se realiza desde un equipo diferente al sever
+
+
+***************************************************************************************************************
+
+sudo apt seach lynis		//para buscar si lynis esta en los repositorios
+
+sudo apt install lynis		//software para buscar bulnerabilidades
+
+sudo linys audit system
+

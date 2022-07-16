@@ -314,21 +314,25 @@ chmod +x /usr/share/applications/netbeans.desktop
 ***************************************************************************************************************
 
 //Servicios
-top							//ver servicios en ejecución
-systemctl 						//vision detallada de todos los servivios
+top						//ver servicios en ejecución
+systemctl 					//vision detallada de todos los servivios
 systemctl list-dependencies [servicio]		//ver las dependencias de un servicio ya que 
-							//los servicios dependen de otros servicios
+						//los servicios dependen de otros servicios
 systemctl [servicio]
 systemctl mysql.service				//ver detalles de un servicio
 systemctl start apache2.service			//iniciar un servicio
-systemctl status apache2.service			//status del servivio
+systemctl status apache2.service		//status del servivio
 systemctl stop	apache2.service			//detener un servicio
-systemctl restart apache2.service			//reiniciar un servicio
-systemctl enable apache2				//habilitar el servicio para que se inicie automatica
-//los logs estan en /var/log
-journalctl –disk-usage					//lista el uso del HD del journals
-journalctl –list-boots					//lista los rerinicios del SO
+systemctl restart apache2.service		//reiniciar un servicio
+systemctl enable apache2			//habilitar el servicio para que se inicie automatica
 
+//los logs estan en /var/log
+journalctl –disk-usage				//lista el uso del HD del journals
+journalctl –list-boots				//lista los rerinicios del SO
+
+li /lib/systemd/system				//muestra los archivos de los servicios que se ejecutan al iniciar el SO
+						//son archivos .service
+						
 ***************************************************************************************************************
 
 //Crear mi propio servicio
@@ -349,7 +353,9 @@ ____________________________________
 
 	[Service]
 	User=root
+	WorkingDirectory=/home/jangeltr/Documents/dirDeLaApp
 	ExecStart=/home/jangeltr/sisae.sh
+	Restart-on=failure
 
 	[Install]
 	Wantedby=multi-user.tarjet
