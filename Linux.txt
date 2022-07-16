@@ -244,14 +244,6 @@ awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -nr
 
  ***************************************************************************************************************
  
- //Agregrando firewall y abriendo puerto para mysql
-apt install ufw
-sudo ufw status
-ufw allow mysql
-sudo service ufw restart
-
- ***************************************************************************************************************
- 
  //Admon de paquetes
 sudo dpkg -l			//muestra todo los paquetes instalados en el sistema
 sudo dpkg -i paquete.deb	//instala un paqute

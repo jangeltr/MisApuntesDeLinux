@@ -1,0 +1,10 @@
+***************************************************************************************************************
+ 
+//Agregrando firewall y abriendo puerto para mysql
+apt install ufw
+sudo ufw status
+ufw allow mysql
+ufw allow 22 comment 'ssh'
+ufw allow 3000 comment 'Apache'
+ufw allow 4000 comment 'CodeS'
+sudo service ufw restart

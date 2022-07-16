@@ -14,8 +14,8 @@ sudo apt install git
 	git config --list
 
 	//configurar
-	git config --global user.name “jangeltr”
-	git config --global user.email “jangeltr@hotmail.com”
+	git config --global user.name “usuario”
+	git config --global user.email “usuario@hotmail.com”
 	git config --global color.ui true
 	  
 3. Agregar al staging area todos los archivos del proyecto
@@ -50,9 +50,9 @@ sudo apt install git
 	
 Tags
 
-git tags							//muestra un alista de los tags que hay
+git tags						//muestra un alista de los tags que hay
 git show-ref –tags					//muestra todos los tags que hay con un id
-git tag -a v1.0 -m “Primera version” idCommit	//el idCommit es tomado de la lista de commits
+git tag -a v1.0 -m “Primera version” idCommit		//el idCommit es tomado de la lista de commits
  							//generada con git log
 git push origin –tags					//para subir a github los tags
 git tag -d v1.0						//para borrar el tag del repo local
@@ -125,7 +125,7 @@ Para subir a gitHub todas las ramas hay que darle el git push en cada rama
 GITHUB
 Para enlazar nuestro proyecto git a github
 
-	git remote add origin https://github.com/jangeltr/TecNM_Tlajomulco_SISAE.git
+	git remote add origin rutaObtenidaDeGitHub
 	
 	//para ver todos los proyectos enlazados
 	git remote -v
@@ -135,9 +135,9 @@ Para enlazar nuestro proyecto git a github
 Para subir nuestro proyecto git a github
 
 	git push -u origin main	//se especifica la rama a subir
-		username: jangeltr
-		pass:Mitssy0612
-		token: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
+		username: usuario
+		pass:El chido
+		
 
 	//si al subir, alguien mas subio antes cambios a esa rama, debemos primero descargar los
  	//cambios y mezclarlos localmente
@@ -151,7 +151,7 @@ Para subir nuestro proyecto git a github
 
 Descargar el proyecto de github completo
 
-	git clone https://github.com/jangeltr/TecNM_Tlajomulco_SISAE.git
+	git clone rutaObtenidaDeGithub
 
 Para bajar los cambios subidos a github
 	git pull origin main
@@ -173,7 +173,7 @@ HACER GIT PUSH SIN NECESIDAD DE ESTAR PONIENDO USUARIO Y PASSWORD
 1. Generar claves privada y publica para mi cuenta de correo electronico
 Solo la primera vez, cuando se agrega a gitLab la clave publica creada
 
-ssh-keygen -t rsa -b 4096 -C "jangeltr@hotmail.com"
+ssh-keygen -t rsa -b 4096 -C "usuario@hotmail.com"
 
 //me funciono tambien asi
 ssh-keygen -t rsa
@@ -201,7 +201,7 @@ pide la frase puesta en el paso 1
 6. Ir en la computadora local al directorio de mi proyecto de software
 git remote -v 	//ver la url a la que esta enlazado mi proyecto en github
 
-git remote set-url origin git@github.com:jangeltr/TecNM_Tlajomulco_SISAE.git
+git remote set-url origin rutaObtenidaGitHub
 
 git pull origin main 		//este es la primer vez para enlazarlos con ssh, deben estar 
 				//iguales en commits, o sea, ambos repos el local y el remoto
