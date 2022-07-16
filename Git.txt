@@ -160,7 +160,7 @@ Si copiamos el proyecto completo a otra maquina y queremos actualizarlo
 la primera vez marca un error al hacer git pull origin main
 
 es necesario primero
-	git stash		//es para poner posibles cambios del staging memory sin perderlos
+	git stash		//es para poner posibles cambios del staging memory sin perderlos antes de hacer commit
 				//git stash pop 	//regresa los cambios guardados al stagin memory 
 y luego
 	git pull origin main
