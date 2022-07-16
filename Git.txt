@@ -1,0 +1,220 @@
+sudo apt install git
+
+0. Ver la lista de comandos de Git
+	git
+
+1. Inicializar un proyecto en working area
+	git init
+
+2. Configurar Git 
+	//ver la lista de comandos de configuracion
+	git config
+
+	//ver la configuracion actual
+	git config --list
+
+	//configurar
+	git config --global user.name “jangeltr”
+	git config --global user.email “jangeltr@hotmail.com”
+	git config --global color.ui true
+	  
+3. Agregar al staging area todos los archivos del proyecto
+	git add .
+	git rm --cached archivo.ext  //para quitar un archivo del staging area dejandolo en el 
+					working area
+
+4. Para ver el estado de mi proyecto y ver cuales archivos han sufrido cambios
+	git status
+	git diff      //Para ver cambios entre working area y staging area
+	//cuando hay mucha info       q para salir
+	git show		//Muestra los cambios hechos a todos los archivos en el ultimo commit
+	git log archivo		//la historia del archivo
+
+5. Cuando tenemos una version terminada y la vamos a subir al repository
+	git commit -m “Nombre para identificar la version”
+	git commit amend 	//cuando algo nos falto en el ultimo commit y se lo queremos agregar
+
+6. Para ver el historial de commits
+	git log
+	git log --stat  //Muestra los cambios entre commit y commit
+	//cuando hay mucha info       q para salir
+
+7. Para ver los cambios que se han realizado a un archivo despues del ultimo commit
+	git show archivo.txt
+
+8. Para ver los cambios entre un commit y otro
+	git diff codigoCommitMasViejo codigoCommitMasNuevo
+	
+
+***************************************************************************************************************
+	
+Tags
+
+git tags							//muestra un alista de los tags que hay
+git show-ref –tags					//muestra todos los tags que hay con un id
+git tag -a v1.0 -m “Primera version” idCommit	//el idCommit es tomado de la lista de commits
+ 							//generada con git log
+git push origin –tags					//para subir a github los tags
+git tag -d v1.0						//para borrar el tag del repo local
+git push origin :refs/tags/v1.0				//borra el tag del repo Origin en github
+
+ ***************************************************************************************************************
+ 
+ DESHACER CAMBIOS
+Desahacer los cambios en todos los archivos volviendo al commit especificado en el codigo
+	//deja el staging area intacto
+	git reset  codigoCommit  --soft
+	//regresa al commit especificado quitando tambien todo del staging area
+	git reset  codigoCommit  --hard
+
+Deshacer cambios en algun archivo devolviendolo a un commit especifico
+	git checkout codigoCommitAntiguo archivo.ext	
+	//sin modificar el staging area
+	//Deja todos los commits intactos, asi que podemos ver el archivo y luego traer otra vez el
+ 	//archivo del ultimo commit
+	git checkout codigoCommitMasNuevo archivo.ext
+	
+ ***************************************************************************************************************
+ 
+ RAMAS
+ El archivo llamado .gitignore es una archivo que contendra las carpetas o arhivos a ignorar
+
+Para ver el estatus del proyecto y ver en que rama estoy
+	
+	git status
+
+Para ver que ramas del proyecto hay y en que rama estoy
+
+	git branch
+	git show-branch –all  		//muestra las ramas con mas informacion
+
+Para ver las ramas remotas, las del origin
+	git branch -r
+
+Crear una nueva rama del proyecto
+
+	git branch “nuevaRama”
+
+Cambiarse a otra rama
+
+	git checkout “OtraRama”
+
+	//Si en el proyecto local tengo varias ramas y me cambio de rama sin hacer commit se pierden los cambios hechos a los archivos despues del ultimo commit de esa rama.
+
+Fucionar 2 ramas
+
+	//estando en la rama principal
+
+	git merge rama2 “mensaje porque se crea un nuevo commit en la rama principal”
+
+Si al fusionar dos ramas hay un conflicto no se realiza el merge.
+Un conflicto se da cuando en ambas ramas se modifico la misma linea.
+Hay que entrar al VSCode y ahi se veran las lineas en conflicto, las de una rama y las de la otra, habra que escoger cuales queremos dejar seleccionando la opcion que nos da VSCode.
+Los cambios de unir esas 2 ramas apareceran en los archivos pero aun no se realiza el merge como tal.
+Se tiene que hacer       git add .
+Y luego hacer el commit.
+Es decir, una vez solucionado el conflicto, se tiene que terminar el merge manualmente.
+
+muestra los commits de las ramas con unas lineas laterales, se ve mejor. 
+git log –all –graph –decorate --oneline	
+
+Para subir a gitHub todas las ramas hay que darle el git push en cada rama
+
+ ***************************************************************************************************************
+ 
+GITHUB
+Para enlazar nuestro proyecto git a github
+
+	git remote add origin https://github.com/jangeltr/TecNM_Tlajomulco_SISAE.git
+	
+	//para ver todos los proyectos enlazados
+	git remote -v
+	//para quitar uno 
+	git remote rm origin
+
+Para subir nuestro proyecto git a github
+
+	git push -u origin main	//se especifica la rama a subir
+		username: jangeltr
+		pass:Mitssy0612
+		token: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
+
+	//si al subir, alguien mas subio antes cambios a esa rama, debemos primero descargar los
+ 	//cambios y mezclarlos localmente
+	git pull origin main						//descarga y hace merge 
+ 	git pull origin main	--allow-unrelated-histories 		//descarga ramas que no
+									//partieron del mismo punto
+	git push -u origin main	//ahora si ya se sube
+	//se pueden hacer cambios a los archivos online y commits y ya se descargan y
+	//convinan con los locales
+	git pull origin main
+
+Descargar el proyecto de github completo
+
+	git clone https://github.com/jangeltr/TecNM_Tlajomulco_SISAE.git
+
+Para bajar los cambios subidos a github
+	git pull origin main
+
+Si copiamos el proyecto completo a otra maquina y queremos actualizarlo
+la primera vez marca un error al hacer git pull origin main
+
+es necesario primero
+	git stash		//es para poner posibles cambios del staging memory sin perderlos
+				//git stash pop 	//regresa los cambios guardados al stagin memory 
+y luego
+	git pull origin main
+
+ ***************************************************************************************************************
+
+CONFIGURAR SHH PARA USAR EN LUGAR DE HTTPS
+HACER GIT PUSH SIN NECESIDAD DE ESTAR PONIENDO USUARIO Y PASSWORD
+
+1. Generar claves privada y publica para mi cuenta de correo electronico
+Solo la primera vez, cuando se agrega a gitLab la clave publica creada
+
+ssh-keygen -t rsa -b 4096 -C "jangeltr@hotmail.com"
+
+//me funciono tambien asi
+ssh-keygen -t rsa
+
+//pide un nombre de archivo: poner id_rsa
+//y una frase 2 veces
+
+2. Iniciar el agente de llaves para que recuerde la llave durante una sesion
+
+eval $(ssh-agent -s)
+
+3. Agregar la llave creada en el paso 1 al programa iniciado en el paso 2.
+El comando es ssh-add y se especifica a continuacion la ruta donde esta la llave privada, esta ruta es mostrada como resultado del paso 1.
+
+ssh-add nombre del archivo que pusimos en el paso 1
+quedaria asi:   ssh-add id_rsa
+//ssh-add -t 5w id_rsa
+
+pide la frase puesta en el paso 1
+
+4. Ir a Github – Settings – SSH – New SSH y pegar ahi mi llave publica, esta se encuentra en la misma carpeta de mi llave privada, creada en el paso 1
+
+5. Ir a Github – Repositories – Seleccionar el repositorio – donde se obtiene el link de acceso, seleccionar SSH y copiar el link
+
+6. Ir en la computadora local al directorio de mi proyecto de software
+git remote -v 	//ver la url a la que esta enlazado mi proyecto en github
+
+git remote set-url origin git@github.com:jangeltr/TecNM_Tlajomulco_SISAE.git
+
+git pull origin main 		//este es la primer vez para enlazarlos con ssh, deben estar 
+				//iguales en commits, o sea, ambos repos el local y el remoto
+				//en github deben ser iguales
+//de aquí en adelante ya no debe de pedir cuenta de usuario y password en el push
+ ***************************************************************************************************************
+ 
+ ***************************************************************************************************************
+ 
+ ***************************************************************************************************************
+
+
+
+
+
+

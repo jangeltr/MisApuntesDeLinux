@@ -1,0 +1,51 @@
+Proceso para respaldar SISAE
+1. abrir Terminal 1
+2. su
+3. ssh -o TCPKeepAlive=yes -o ServerAliveInterval=100 jangeltr@45.190.241.172
+4. su
+5. systemctl stop sisae
+10. systemctl start sisae
+11. exit, exit
+
+6. abrir Terminal 2
+7. su
+8. cd Documents/Respaldo\ Server\ ITTJ/
+9. scp -r root@45.190.241.172:/home/jangeltr/Documents/meteor/TecNM-Tlajomulco ./
+12. scp -r root@45.190.241.172:/var/www/html ./
+13. Cambiar los permisos de las carpetas, subcarpetas y archivos
+      chmod -R 777 Respaldo\ Server\ ITTJ/
+14. Copiarlos directamente con el explorador de archivos al HD externo
+
+
+
+Proceso para aplicar cambios reprogramados al SISAE
+0. Ingresar a la terminal
+1. su
+2. ssh -o TCPKeepAlive=yes -o ServerAliveInterval=100 jangeltr@45.190.241.172
+3. su
+4. systemctl stop sisae
+6. cd /Documents/meteor/TecNM-Tlajomulco
+7. rm -rf public
+8. rm -rf server
+9. rm -rf client
+//desde el developer
+10. cd /Documents/meteor/TecNM-Tlajomulco
+11. scp -r server root@45.190.241.172:/home/jangeltr/Documents/meteor/TecNM-Tlajomulco
+12. scp -r public root@45.190.241.172:/home/jangeltr/Documents/meteor/TecNM-Tlajomulco
+13. scp -r client root@45.190.241.172:/home/jangeltr/Documents/meteor/TecNM-Tlajomulco
+14. ssh -o TCPKeepAlive=yes -o ServerAliveInterval=100 jangeltr@45.190.241.172
+15. su
+14. systemctl start sisae
+15. exit, exit
+
+
+
+Proceso NUEVO para aplicar cambios reprogramados al SISAE
+0. Ingresar a la terminal
+1. su
+2. ssh -o TCPKeepAlive=yes -o ServerAliveInterval=100 jangeltr@45.190.241.172
+3. su
+4. systemctl stop sisae
+6. cd /Documents/meteor/TecNM-Tlajomulco
+7. git pull origin main
+8. systemctl start sisae

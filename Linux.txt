@@ -1,0 +1,412 @@
+ ***************************************************************************************************************
+
+//Algunos comandos básicos
+shutdown now		//apagar el servidor
+shutdown -r now  	//reiniciar el servidor
+
+sudo passwd		//poner contraseña inicial al root
+type comando		//muetra el tipo de comando
+man comando		//muestra el manual de ayuda del comando
+info comando		//muestra una ayuda breve sobre el comando
+commando --help   	//otra ayuda breve
+whatis comando	//una descripción de para que es el comando
+history			//la lista de comandos que hemos utilzado en la sesion con un numero
+!Numero		//signo de admiracion y numero para ejecutar ese comando del history
+clear			//limpiar la pantalla
+hostname		//nombre del server
+hostname -I		//Ip del server
+su			//cambiar a super user
+df -h			//Distribución del espacio en disco del S.O.
+free -m			//muestra la cantidad de memoria usada y libre
+alias nombreAlias=”todo el comando con parametros”  //es para simplificar y escribir rapido
+			//comandos complejos
+file archivo		//muestra informacion sobre el archivo
+comando –help	//muestra una ayuda del comando
+history			//muestra el historial de comandos que yo he tecleado
+ 
+ ***************************************************************************************************************
+ 
+ //Copiado
+cp /etc/apache2/archivo.txt  /home/angel			//copiado de archivo
+cp -r /home/angel/TecNM-Tlajomulco  /media/angel	//copia un directorio
+//Copiar mi proyecto de software al HD externo
+ cp -r TecNM-Tlajomulco/ /media/angel/HD\ Externo\ Desarrollo\ de\ Soft./Desarrollo\ de\ Software/Developer/
+
+ ***************************************************************************************************************
+ 
+ //Borrado
+rm archivo
+rm -rf directorio
+
+ ***************************************************************************************************************
+
+ //Mover
+mv /sourcePath/file  /tarjetPath
+
+ ***************************************************************************************************************
+ 
+//links simbolicos o especie de acceso directo
+ln -s archivoODirectorio nombreDelLinkSimbolico		//crea el link simbolico
+
+ ***************************************************************************************************************
+ 
+ //Paja ejecutar un archivo sh, es necesario el archivo tenga permisos de ejecusion
+sh ./archivo.sh
+
+ ***************************************************************************************************************
+ 
+ //Trabajo con directorios
+pwd			//nos dice el path en el que estamos
+ls			//lista los archivos sin datos y en forma horizontal
+ls -l			//lista con atributos en vertical
+ls -lah			//a = archivos ocultos		h = humans, mas facil de leer
+cd			//este comando solo nos lleva al home del usuario
+cd /			//raiz
+cd /home/		//ir a una carpeta
+cd ..			//subir nivel en carpetas
+mkdir directorio	//crea una carpeta
+rm -r nombre		//remover archivo y con -r recursivo borra directorios con contenido
+du -h			//Tamaño de cada carpeta de todo el sistema
+tree -L 2		//muestra en forma de arbol los directorios en n niveles
+nautilus		//abrir el explorador de archivos
+which archivoODir	//busca un archivo en la ruta de la variable Path
+find ./ -name Archivo	//busca Archivo a partir de la ruta ./
+find ./ -type d -name nombreDir		//-type d para buscar solo directorios
+					//-type f para buscar solo archivos
+
+Directorio	Contenido
+bin		Binarios de órdenes esenciales
+boot		Ficheros estáticos utilizados por el cargador de arranque
+dev		Ficheros de dispositivos
+etc		Configuración del sistema específico del host
+home		Directorios de los usuarios
+lib		Bibliotecas compartidas esenciales y módulos del núcleo
+media		Puntos de montaje para medios extraíbles
+mnt		Punto de montaje para un sistema de ficheros
+proc		Directorio virtual para la información del sistema
+root		Directorio Home para el usuario root
+run		Datos variables en tiempo de ejecución
+sbin		Binarios esenciales del sistema
+sys		Directorio virtual para la información del sistema
+tmp		Ficheros temporales
+usr		Jerarquía secundaria
+var		Datos variables
+srv		Datos de los servicios ofrecidos por el sistema
+opt		Paquetes de programas y aplicaciones opcionales
+
+ ***************************************************************************************************************
+ 
+ //Trabajo con unidades USB
+lsusb				//muestra lista de los dispositivos conetados via USB
+df				//muestra espacios de disco y las unidades USB conectadas
+sudo unmount /dev/sdb1	//desmontar la USB
+apt install dosfstools		//instalar paquete con los comandos para formatear
+fdisk -l 			//conocer el identificador de las USB
+mkfs.vfat -F 32 -n [“nombre que tendra la USB”] [Identificador de la USB] 
+mkfs.ntfs -n [“nombre que tendra la USB”] [Identificador de la USB]
+mkfs.ext4 -n [“nombre que tendra la USB”] [Identificador de la USB]
+
+dd if=[path_to_iso] of=[/dev/sdb] ststus=progress	//para crear USB booteable con un ISO
+dd if=[/dev/sdb] of=[archivo.iso] ststus=progress	//para crear una imagen ISO de una USB
+
+ ***************************************************************************************************************
+ 
+//Variables de entorno
+
+env				//muestra todas las variables de entorno
+printenv			//Mostrar las variables de entorno y sus valores
+export  variable=”valor”	//crear la variable o modificar el valor de una variable
+unset variable			//revertir el valor de la variable
+echo $variable			//ver el valor de la variable
+				//Para hacer persistentes las variables
+nano /etc/environment		//agregar la variable y su valor y guardar el archivo
+
+ ***************************************************************************************************************
+ 
+ //manejo de archivos de texto
+touch archivo.txt			//crea un archivo de texto en blanco
+cat archivo				//mostrar el contenido
+cat archivo1 archivo2			//concatena los 2 archivos
+sudo nano archivo			//editar el contenido
+find -name archivo			//buscar un archivo
+find /var/log/ -name "*.log" -type f	//busca en el directorio log archivos con extension log
+whereis archivo	/			/nos da el path al archivo 
+head archivo.txt -n 15			//muestra las n primeras lineas del archivo
+tail archivo.txt -n 15			//mustras las n ultimas lienas del archivo
+less archivo.txt			//abre el archivo de texto en modo visualizacion y me permite recorrerlo
+xdg-open archivo.txt			//abre el archivo con nuestro editor default
+grep Palabra archivo			//muestra las lineas del archivo que tengan la Palabra, y es case sensitive
+grep -i "Palabra" archivo		//igual linea anterior pero sin case sentive
+grep -c "Palabra" archivo		//muestra el numero de veces que aparece la palabra en el archivo
+grep -v "Palabra" archivo 		//muestra todas las lineas que no tienen la palabra
+grep Palabra archivo1 > archivo2 	//manda el resultado al archivo 2
+wc -l archivo				//muestra el numero de lineas del archivo
+wc -w archivo 				//muestra el numero de palabras del archivo
+
+ ***************************************************************************************************************
+ 
+ //crear zips
+tar -cvf archivo.tar directorioAComprimir	//genera un archivo .tar
+tar -cvzf archivo.tar.gz directorioAComprimir	//comprime con algoritmo gzip
+tar -xzvf archivo.tar.gz			//descomprime un archivo gzip
+zip -r archivo.zip dirAComprimir		//genara un zip, si no esta el comando hay q instalarlo
+unzip archivo.zip				//descomprime el archivo
+
+ ***************************************************************************************************************
+ 
+//Usuarios y Permisos
+//hay algunos comandos del sistema que no estan en la carpeta bin, estan en sbin y para ejecutarlos es
+//necesario acceder a esa carpeta o copiarlos a la carpeta bin
+//tal es el caso del comando adduser, usermod, entre otros
+
+//Usuarios
+whoami				//me muestra el nombre de mi cuenta de usuario 
+id				//informacion del usuario y grupos alos que pertenece
+su - usuario			//nos cambia al usuario preguntando la contrase;a de ese usuario
+sudo su – usuario		//nos cambia al usuario sin preguntar la contrase;a de ese usuario
+passwd				//cambiar contrase;a del usuario actual
+passwd usuario			//cambia contrase;a del usuario especifico		
+less /etc/passwd		//muestra un archivo con la lista de usuarios en el sistema y sus 
+				//datos
+cat /etc/passwd | cut -d: -f1	//muestra solo los nombre de los usuarios del sistema
+who				//lista los usuarios conectados
+adduser Juan			//agregar al usuario Juan
+userdel Juan			//elimina el usuario Juan
+
+ ***************************************************************************************************************
+ 
+//Grupos
+less /etc/group			//muestra un archivo con la lista de los grupos de usuarios
+groups				//lista los grupos alos que pertenece el usuario actual
+groups usuario			//lista los grupos a los que pertenece el usuario
+getent group root		//lista los usuarios del grupo root
+groupadd groupname		//creea un grupo
+groupdel groupname		//elimina un grupo
+usermod -a -G root angel	//agrega al grupo root el usuario angel
+gpasswd -a username groupname	//agrega el usuario al grupo
+gpasswd -d username groupname	//remueve un usuario de un grupo
+
+//para que el usuario angel pueda ejecutar comandos de administrador
+//empezando con sudo es necesario agregar el usuario al grupo sudo y reiniciar el 
+//equipo
+usermod -a -G sudo angel
+reboot				//si no se ejecuta es porque tambien esta en la carpeta /usr/sbin
+
+ ***************************************************************************************************************
+ 
+ //Permisos
+chown  usuario carpetaOArchivo			//cambiar propietario
+chmod 777 archivo				//cambiar permisos 1N Propietario
+						//2N Grupo del propietario, 3N el resto
+chmod -R 777 carpeta
+find TecNM-Tlajomulco\ Dic\ 18-2020/ -type d -exec chmod 755 {} \;
+						//Cambia los permisos de esa carpeta y todas las subcarpetas
+find TecNM-Tlajomulco\ Dic\ 18-2020/ -type f -exec chmod 644 {} \;
+						//Cambia los permisos de todos los archivos en esa carpeta y subcarpetas
+chmod -R <permissionsettings> <dirname>		//Cambia los permisos del folder y TODO su contenido
+
+ ***************************************************************************************************************
+ 
+ //Utilidades de Red
+sudo ifconfig				//muestra informacion de red, si no esta instalarlo asi
+					//sudo apt install net-tools
+ping www.google.com			
+curl www.google.com > index.html	//trae el archivo de del sitio web que responda y lo pone en index
+curl -I www.google.com			//trae las cabeceras del archivo como tipo de webserver, etc
+wget www.google.com 			//descarga de internet el archivo
+traceroute www.google.com		//traza la ruta al sitio con saltos de router en router
+netstat -i 				//muestra dispositivos de red en el equipo
+hostname				//nombre del equipo
+route -n				//muestra tabla de ruteo
+nslookup				//probar el dns
+netstat -ltunp				//muestra lista de puertos y el programa asociado
+
+
+//Configurando IP estatica
+nano /etc/network/interfaces
+auto eno1
+allow-hotplug eno1
+iface eno1 inet static
+  address 201.151.178.68
+  netmask 255.255.255.248
+  gateway 201.151.178.65
+  dns-nameservers 8.8.8.8
+
+systemctl restart networking
+
+//AWK
+Es un lenguaje de scripting que nos ayuda a procesar información usando patrones para filtrar, reorganizar y darle formato a nuestros datos.
+
+Por ejemplo:	//Muestra las conexiones que se han realizado a este servidor 
+
+awk '{print $1}' /var/log/nginx/access.log
+awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -nr
+
+ ***************************************************************************************************************
+ 
+ //Agregrando firewall y abriendo puerto para mysql
+apt install ufw
+sudo ufw status
+ufw allow mysql
+sudo service ufw restart
+
+ ***************************************************************************************************************
+ 
+ //Admon de paquetes
+sudo dpkg -l			//muestra todo los paquetes instalados en el sistema
+sudo dpkg -i paquete.deb	//instala un paqute
+sudo dpkg -r paquete.deb	//remueve un paquete
+sudo dpkg-reconfigure paquete	//reconfigurar un paquete ya instalado
+sudo apt install paqute		//instala un paquete
+sudo apt update			//actualica la lista de paquetes
+sudo apt upgrade		//descarga actualizaciòn de paquetes
+sudo apt dist-upgrade		//mejora la descarga de actualización de paquetes
+
+sudo apt remove paquete		//elimina un paquete
+sudo apt purge paquete		//elimina los restos de un paquete, algunas carpetas o conf.
+sudo apt autoremove		//elimina cualquier dependencia huerfana
+sudo apt-cache search mysql	//para buscar un paqute y ver su info
+
+//Instalar algunas librerias escenciales para instalar paquetes que no estan en repositorio y algunas veces es 
+//necesario compilarlos
+sudo apt install build-essential libgd-dev openssl libssl-dev unzip apache2 php gcc libdbi-perl libdbd-mysql-perl
+
+//Nagios es un software muy util para monitoreo 
+//para instalar Nagios
+https://www.nagios.org/downloads/		//ir a downloads y descargar nagios core
+
+//obtener nagios con wget
+wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.4.4.tar.gz -O nagioscore.tar.gz
+tar xvzf nagioscore.tar.gz			//descomprimir el archivo
+cd nagios-4.4.4
+# 1: sudo ./configure --with-https-conf=/etc/apache2/sites-enabled 
+# 2: sudo make all 
+# 3: sudo make install 
+# 4: sudo make install-init 
+# 5: sudo make install-commandmode 
+# 6: sudo make install-config 
+# 7: sudo make install-webconf
+sudo systemctl status nagios
+sudo systemctl start nagios
+
+//Hay que instalar posteriormente algunos plugins para nagios para quer tenga mas utilidades
+https://nagios-plugins.org/downloads/nagios-plugins-2.2.1.tar.gz
+
+//install paquete curl
+sudo apt install curl
+
+//install wget
+sudo apt install wget
+apt-get update && apt-get install -y gnupg2
+
+***************************************************************************************************************
+
+//Crear acceso directo
+
+nano /usr/share/applications/netbeans.desktop
+
+[Desktop Entry]
+Name=NetBeans 11.0 IDE
+Comment=NetBeans 11.0 IDE
+Type=Application
+Encoding=UTF-8
+Exec=/opt/netbeans/bin/netbeans
+Icon=/opt/netbeans/nb/netbeans.png
+Categories=GNOME;Application;Development;
+Terminal=false
+StartupNotify=true
+
+chmod +x /usr/share/applications/netbeans.desktop
+
+
+***************************************************************************************************************
+
+//Servicios
+top							//ver servicios en ejecución
+systemctl 						//vision detallada de todos los servivios
+systemctl list-dependencies [servicio]		//ver las dependencias de un servicio ya que 
+							//los servicios dependen de otros servicios
+systemctl [servicio]
+systemctl mysql.service				//ver detalles de un servicio
+systemctl start apache2.service			//iniciar un servicio
+systemctl status apache2.service			//status del servivio
+systemctl stop	apache2.service			//detener un servicio
+systemctl restart apache2.service			//reiniciar un servicio
+systemctl enable apache2				//habilitar el servicio para que se inicie automatica
+//los logs estan en /var/log
+journalctl –disk-usage					//lista el uso del HD del journals
+journalctl –list-boots					//lista los rerinicios del SO
+
+***************************************************************************************************************
+
+//Crear mi propio servicio
+1.- Crear un archivo ejecutable /home/jangeltr/sisae.sh con el comando		
+	touch sisae.sh
+	nano sisae.sh
+		#!/bin/bash
+		cd /home/jangeltr/Documents/meteor/TecNM-Tlajomulco/
+		sudo meteor --port 80 –allow-superuser
+2.-sudo chmod +x sisae.sh
+3.- cd /etc/systemd/system/        //aqui se encuentran todos los servicios
+4.- sudo touch sisae.service
+5.- sudo nano sisae.service
+____________________________________
+	[Unit]
+	Description=Demonio para ejecutar el sisae de meteor
+	after=network.tarjet
+
+	[Service]
+	User=root
+	ExecStart=/home/jangeltr/sisae.sh
+
+	[Install]
+	Wantedby=multi-user.tarjet
+____________________________________
+[Unit]
+Description=Demonio para ejecutar el sisae de meteor
+After=network-online.target
+
+[Service]
+User=root
+ExecStart=/home/jangeltr/Documents/sisae.sh
+
+[Install]
+WantedBy=multi-user.tarjet
+____________________________________
+6.- systemctl enable sisae.service  //para que se inicie automaticamente al iniciar linux
+7.- systemctl start sisae.service
+
+***************************************************************************************************************
+
+//Administracion de recursos del sistema
+
+free -h 				//muestra la cantidad de memoria usada y libre
+cat /proc/cpuinfo			//muestra informacion del cpu
+cat /proc/cpuinfo | grep “processor” 	//Usa pipeline para mandar la salida al comando grep y
+					//mostrar solamente las lineas que incluyen la palabra processor
+du					//para ver el tama;o de cada directorio en el disco duro
+du -hsc /home/angel/			//para ver el tama;o de ese directorio
+
+//Procesos
+ps				//muestra los procesos corriendo actualmente
+ps auxf				//muestra los procesos con mas datos en forma de columnas 
+ps auxf | sort -nr -k 4		//el resultado lo ordena por la columna 4
+kill numero			//termina proceso numero, donde numero es sacado de ps
+top				//muestra los procesos que usan mas recursos
+				//mientras muestra los procesos se preciona h para ayuda y tendremos una serie
+ 				//de opciones, damos Esc y luego cualquier opcion como u pra ver los procesos 
+				//de solo un usuario solicitado.
+htop				//version mejorada de top pero hay que instalarlo
+sudo journalctl –disk-usage
+sudo journalctl –list-boots	//lista los rerinicios del SO
+
+***************************************************************************************************************
+
+***************************************************************************************************************
+
+***************************************************************************************************************
+
+
+
+
+

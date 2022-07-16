@@ -1,0 +1,13 @@
+﻿Android Studio
+
+Descargar del sitio oficial el paquete .tar.gz
+descomprimirlo
+
+copiar la carpeta de android-studio dentro de /opt/
+entrar a /opt/android-studio/bin
+ejecutar: sh studio.sh
+
+
+para ejecutar el Android Studio despues 
+entrar a /opt/android-studio/bin
+ejecutar: sh studio.sh

@@ -1,0 +1,12 @@
+First, install the snap package manager using the apt command in case your system doesn’t have it.
+
+sudo apt update && sudo apt install -y snapd
+
+
+Run the following command to install the IntelliJ IDEA community edition.
+
+sudo snap install intellij-idea-community --classic
+
+
+
+

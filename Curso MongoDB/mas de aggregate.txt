@@ -1,0 +1,96 @@
+
+
+
+
+//arroja el nombre de todos los docentes
+ db.users.aggregate([{$match:{'roles.SAD':'Docente'}},{$sort:{'profile.name':1}},{$project:{_id:0,'nombre':'$profile.name'}},{$out:'resumenD'}])
+
+//arroja nombre y revisado (true o false) si tiene, si no solo el nombre
+db.horarios.aggregate([{$match:{periodo:'Ene-Jun 2018'}},{$project:{nombre:1,revisado:1}},{$sort:{nombre:1}},{$out:'resumenH'}])
+db.reporte1.aggregate([{$match:{periodo:'Ene-Jun 2018'}},{$project:{nombre:1,revisado:1}},{$sort:{nombre:1}},{$out:'resumenR1'}])
+db.reporte2.aggregate([{$match:{periodo:'Ene-Jun 2018'}},{$project:{nombre:1,revisado:1}},{$sort:{nombre:1}},{$out:'resumenR1'}])
+db.reporte3.aggregate([{$match:{periodo:'Ene-Jun 2018'}},{$project:{nombre:1,revisado:1}},{$sort:{nombre:1}},{$out:'resumenR1'}])
+db.reporteFinal.aggregate([{$match:{periodo:'Ene-Jun 2018'}},{$project:{nombre:1,revisado:1}},{$sort:{nombre:1}},{$out:'resumenRF'}])
+db.proyectoIndividual.aggregate([{$match:{periodo:'Ene-Jun 2018'}},{$project:{nombre:1,revisado:1}},{$sort:{nombre:1}},{$out:'resumenPI'}])
+
+//Convinaciones de tablas resumen
+
+db.resumenD.aggregate([{$lookup:{from:'resumenH',localField:'nombre',foreignField:'nombre',as:'fromResumenH'}},{$project:{nombre:1,H:{$size:'$fromResumenH'}}},
+{$lookup:{from:'resumenR1',localField:'nombre',foreignField:'nombre',as:'fromResumenR1'}},{$project:{nombre:1,H:1,R1:{$size:'$fromResumenR1'}}},
+{$lookup:{from:'resumenR2',localField:'nombre',foreignField:'nombre',as:'fromResumenR2'}},{$project:{nombre:1,H:1,R1:1,R2:{$size:'$fromResumenR2'}}},
+{$lookup:{from:'resumenR3',localField:'nombre',foreignField:'nombre',as:'fromResumenR3'}},{$project:{nombre:1,H:1,R1:1,R2:1,R3:{$size:'$fromResumenR3'}}},
+{$lookup:{from:'resumenRF',localField:'nombre',foreignField:'nombre',as:'fromResumenRF'}},{$project:{nombre:1,H:1,R1:1,R2:1,R3:1,RF:{$size:'$fromResumenRF'}}},
+{$lookup:{from:'resumenPI',localField:'nombre',foreignField:'nombre',as:'fromResumenPI'}},{$project:{nombre:1,H:1,R1:1,R2:1,R3:1,RF:1,PI:{$size:'$fromResumenPI'}}}])
+
+
+//las agregate del SISAE
+
+resumen:function(per){
+        //genera la lista de docentes activos (nombre, periodo)
+        Meteor.users.aggregate([{$match:{'profile.tipo':'Docente','profile.estado':'Activo'}},{$sort:{nombre:1}},{$project:{'nombre':'$profile.name'}},{$addFields: {"periodo": per}},{$out:'resumenD'}])
+        
+        //Genera lista de docentes que subieron horario para revision y horario esta firmado (nombre, revisadoH) nombre del docente que subio horario en excel y si lo subio firmado y sellado tendra true en revisadoH
+        horarios.aggregate([{$match:{periodo:per}},{$project:{nombre:1,'fechaFirmado':{$cond:['$fechaFirmado',true,false]}}},{$project:{'nombre':1,'revisadoH':'$fechaFirmado'}},{$sort:{nombre:1}},{$out:'resumenH'}]);
+        //horarios.aggregate([{$match:{periodo:per}},{$project:{nombre:1}},{$addFields: {"revisadoH":false}},{$sort:{nombre:1}},{$out:'resumenH'}]);
+
+        //genera lista de docentes y el numero de materias asignadas (nombre, A)
+        asignaciones.aggregate([{$match:{periodo:per}},{$project:{_id:0,nombre:'$docente',A:{$size:'$materia'}}},{$sort:{nombre:1}},{$out:'resumenA'}]);
+
+        //genera una lista de docentes y un arreglo de documentos donde cada documento tienen la fecha de la planeacion que subio para despues contarlas.
+        //aquellas en las que no subio planeacion aperece el arreglo con un documento por materia, pero el documento vacio
+        asignaciones.aggregate([{$match:{periodo:per}},{$project:{_id:0,nombre:'$docente','materia.fechaPlaneacion':1}},{$out:'resumenAsig2'}]);
+
+        //actualiza quitando todos los documentos vacios dejando un arreglo vacio en aquellos que no subieron ninguna planeacion
+        resumenAsig2.update({},{$pull:{materia:{fechaPlaneacion:{$exists:false}}}},{multi:true});
+
+        //genera una lista de docentes con el numero de instrumentaciones subidas (nombre, I)
+        resumenAsig2.aggregate([{$project:{_id:0,nombre:1,I:{$size:'$materia'}}},{$sort:{nombre:1}},{$out:'resumenI'}]);
+        
+        //genera una lista de docentes y un arreglo de documentos donde cada documento tiene el campo revisado = true, para despues contarlas
+        //pero si no tiene revisada la instrumentacion de la materia, el documento del arreglo estara vacio
+        asignaciones.aggregate([{$match:{periodo:per}},{$project:{_id:0,nombre:'$docente','materia.revisado':1}},{$sort:{nombre:1}},{$out:'resumenAsig3'}]);
+
+        //actualiza el arreglo de materias quitando los documentos vacios y luego donde revisado = false
+        resumenAsig3.update({},{$pull:{'materia':{revisado:{$exists:false}}}},{multi:true})
+        resumenAsig3.update({},{$pull:{'materia':{revisado:false}}},{multi:true})
+        
+        //genera una lista de docentes con el numero de instrumentaciones revisadas (nombre, I)
+        resumenAsig3.aggregate([{$project:{_id:0,nombre:1,IR:{$size:'$materia'}}},{$sort:{nombre:1}},{$out:'resumenIR'}]);
+
+        //juntar lista de docentes con numero de instrumentaciones subidas con docentes y numero de instrumentaciones revisadas (nombre, I, IR)
+        resumenI.aggregate([{$lookup:{from:'resumenIR', localField:'nombre',foreignField:'nombre',as:'fromResumenIR'}},{$unwind:'$fromResumenIR'},{$project:{nombre:1,I:1,IR:'$fromResumenIR.IR'}},{$out:'resumenISR'}])
+
+
+        reporte1.aggregate([{$match:{periodo:per}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenR1'}]);
+        reporte1.aggregate([{$match:{periodo:per,revisado:true,pathEvidencia:{$exists:true}}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenR1R'}]);
+
+        reporte2.aggregate([{$match:{periodo:per}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenR2'}]);
+        reporte2.aggregate([{$match:{periodo:per,revisado:true,pathEvidencia:{$exists:true}}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenR2R'}]);
+        
+        reporte3.aggregate([{$match:{periodo:per}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenR3'}]);
+        reporte3.aggregate([{$match:{periodo:per,revisado:true,pathEvidencia:{$exists:true}}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenR3R'}]);
+        
+        reporteFinal.aggregate([{$match:{periodo:per}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenRF'}]);
+        reporteFinal.aggregate([{$match:{periodo:per,revisado:true,pathEvidencia:{$exists:true}}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenRFR'}]);
+        
+        proyectoIndividual.aggregate([{$match:{periodo:per}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenPI'}]);
+        proyectoIndividual.aggregate([{$match:{periodo:per,revisado:true,pathEvidencia:{$exists:true}}},{$project:{nombre:1}},{$sort:{nombre:1}},{$out:'resumenPIR'}]);
+        
+        //combinado de datos
+        resumenD.aggregate([{$lookup:{from:'resumenH',localField:'nombre',foreignField:'nombre',as:'fromResumenH'}},{$project:{periodo:1,nombre:1,H:{$size:'$fromResumenH'},HR:{$arrayElemAt:['$fromResumenH.revisadoH',0]}}},
+        {$lookup:{from:'resumenA',localField:'nombre',foreignField:'nombre',as:'fromResumenA'}},{$unwind:'$fromResumenA'},{$project:{_id:0,periodo:1,nombre:1,H:1,HR:1,A:'$fromResumenA.A'}},
+        {$lookup:{from:'resumenISR',localField:'nombre',foreignField:'nombre',as:'fromResumenI'}},{$unwind:'$fromResumenI'},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:'$fromResumenI.I',IR:'$fromResumenI.IR'}},
+        {$lookup:{from:'resumenR1',localField:'nombre',foreignField:'nombre',as:'fromResumenR1'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:{$size:'$fromResumenR1'}}},
+        {$lookup:{from:'resumenR1R',localField:'nombre',foreignField:'nombre',as:'fromResumenR1R'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:{$size:'$fromResumenR1R'}}},
+        {$lookup:{from:'resumenR2',localField:'nombre',foreignField:'nombre',as:'fromResumenR2'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:{$size:'$fromResumenR2'}}},
+        {$lookup:{from:'resumenR2R',localField:'nombre',foreignField:'nombre',as:'fromResumenR2R'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:1,R2R:{$size:'$fromResumenR2R'}}},
+        {$lookup:{from:'resumenR3',localField:'nombre',foreignField:'nombre',as:'fromResumenR3'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:1,R2R:1,R3:{$size:'$fromResumenR3'}}},
+        {$lookup:{from:'resumenR3R',localField:'nombre',foreignField:'nombre',as:'fromResumenR3R'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:1,R2R:1,R3:1,R3R:{$size:'$fromResumenR3R'}}},
+        {$lookup:{from:'resumenRF',localField:'nombre',foreignField:'nombre',as:'fromResumenRF'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:1,R2R:1,R3:1,R3R:1,RF:{$size:'$fromResumenRF'}}},
+        {$lookup:{from:'resumenRFR',localField:'nombre',foreignField:'nombre',as:'fromResumenRFR'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:1,R2R:1,R3:1,R3R:1,RF:1,RFR:{$size:'$fromResumenRFR'}}},
+        {$lookup:{from:'resumenPI',localField:'nombre',foreignField:'nombre',as:'fromResumenPI'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:1,R2R:1,R3:1,R3R:1,RF:1,RFR:1,PI:{$size:'$fromResumenPI'}}},
+        {$lookup:{from:'resumenPIR',localField:'nombre',foreignField:'nombre',as:'fromResumenPIR'}},{$project:{periodo:1,nombre:1,H:1,HR:1,A:1,I:1,IR:1,R1:1,R1R:1,R2:1,R2R:1,R3:1,R3R:1,RF:1,RFR:1,PI:1,PIR:{$size:'$fromResumenPIR'}}},
+        {$out:'resumenGral'}]);
+    }
+    
+

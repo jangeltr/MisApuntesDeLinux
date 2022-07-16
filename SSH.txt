@@ -1,0 +1,109 @@
+//El usuario root debe tener contrase;a 
+sudo passwd root
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//La configuración del archivo sshd_config debe quedar con las siguientes lineas habilitadas:
+//para que pueda uno logearse como root con contrase;a
+
+sudo nano /etc/ssh/sshd_config
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Port 22
+
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+PermitRootLogin yes
+StrictModes yes
+
+PubkeyAuthentication yes
+
+IgnoreRhosts yes
+
+PasswordAuthentication yes
+
+ChallengeResponseAuthentication no
+
+UsePAM yes
+
+X11Forwarding yes
+X11DisplayOffset 10
+
+PrintMotd no
+PrintLastLog yes
+TCPKeepAlive yes
+
+
+AcceptEnv LANG LC_*
+
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+
+ClientAliveInterval 120
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//La configuración del archivo sshd_config debe quedar con las siguientes lineas habilitadas:
+//para que pueda uno logearse con una key privada y publica
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Port 22
+
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_dsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+
+PermitRootLogin yes
+StrictModes yes
+
+PubkeyAuthentication yes
+
+IgnoreRhosts yes
+
+PasswordAuthentication no
+
+
+SyslogFacility AUTH
+LogLevel INFO
+
+LoginGraceTime 120
+PermitRootLogin yes
+StrictModes yes
+
+X11Forwarding yes
+X11DisplayOffset 10
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//en el cliente se debera
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//1.-
+ssh-keygen -t rsa		//se genera la llave
+				//-t type
+//Especifica el algoritmo que se ha utilizado para crear la clave. Los valores posibles son "rsa" o  
+//"dsa" para la versión 2 del protocolo.
+
+//2.- habilitada la conexion con contrase;a en el server se envia la llave
+//donde se encuentre el archivo id_rsa.pub
+ssh-copy-id -i id_rsa.pub remoteUser@remote_host
+
+//3.- Iniciar el agente de llaves para que recuerde la llave durante una sesion
+eval $(ssh-agent -s)	
+
+//4.- Agregar la llave creada al ssh-agent
+ssh-add id_rsa
+
+//5.- Conectarse y no debe pedir contrase;a
+shh usuario@ip
+
+////para deshabilitar conexioncon password solamente poner en “no”
+
+PasswordAuthentication no
+
+sudo systemctl restart ssh
+
+
+
+
+

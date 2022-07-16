@@ -1,0 +1,33 @@
+Apt-get install curl
+
+curl https://install.meteor.com/ | sh
+
+meteor create project
+
+cd  project
+meteor --port 80 --allow-superuser
+
+//Si durante la ejecucion de una aplicacion ocurre este error:
+
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+
+es porque le proyecto de software es demaciado grande y hay que expandir el segmento de memoria asignado al node.js agregando las siguientes variables de entorno al archivo environtment así
+
+nano /etc/environment
+
+NODE_OPTIONS=”--max-old-space-size=4096”
+TOOL_NODE_FLAGS="--max-old-space-size=4096"
+SERVER_NODE_OPTIONS="--max-old-space-size=4096"
+
+
+
+
+//Psibles valores de –max-old-space-size dependiendo de la cantidad de memoria con la que cuente el equipo.
+
+2048
+3072
+4096
+5120
+6144
+7168
+8192

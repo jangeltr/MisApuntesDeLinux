@@ -1,0 +1,200 @@
+//Para instalarlo
+
+sudo apt install mysql-server
+
+//la configuracion esta en, ahi aparece el usuario y password, etc
+less /etc/mysql/debian.cnf
+
+//para configurar
+sudo mysql_secure_installation
+
+********************************************************************************************
+
+//Para instalar la version 8
+NOTA  IMPORTANTE 
+si al ejecutar el comando dpkg marca error ejecutar el siguiente comando 
+sudo -i
+
+
+$ cd /tmp
+$ wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
+$ sudo dpkg -i mysql-apt-config_0.8.13-1_all.deb
+$ sudo apt update
+$ sudo apt install mysql-server
+
+********************************************************************************************
+
+//para quitarlo
+
+sudo apt remove mysql*
+sudo apt purge mysql*
+sudo apt autoremove
+
+********************************************************************************************
+
+//Para usarlo
+mysql -h localhost -u root -p
+
+********************************************************************************************
+
+//para ver el tamaño de las BD
+
+show databases;
+use information_schema;
+show tables;
+show columns from tables;
+
+select table_schema, sum((data_length+index_length)/1024/1024) AS MB from information_schema.tables group by table_schema;
+select * from tables where table_schema="Cultivo";
+
+********************************************************************************************
+
+//Concultar los usarios de mysql
+SELECT user,host FROM mysql.user;
+
+********************************************************************************************
+//Respaldar bases de datos
+mysqldump -u tuUsuario -p  -h tuHost  tuBasedeDatos > unArchivo.sql;
+
+********************************************************************************************
+
+//Restaurar la BD
+mysql -u “usuario” -p”contraseña” -h”nombre-o-dirección-del-host” nombre-de-la-base-de-datos < nombre-del-respaldo.sql
+
+********************************************************************************************
+
+//Enviar resultado de consulta a archivo
+select * from cultivo into outfile ’cultivo.csv’ fields terminated by ’,’ lines terminated by ’\n’;
+
+mandara un error de seguridad
+
+para mostrar las variables de configuracion
+show variables;
+SHOW VARIABLES LIKE "secure_file_priv";
+
+//el resultado de la variable es 
+secure_file_priv = /var/lib/mysql-files/
+
+//agregar al archivo
+nano /etc/mysql/mysql.conf.d/mysql.cnf
+[mysqld]
+secure-file-priv = “”
+
+
+
+//cambiar permisos de la carpeta para que puedan ser grabadas las salidas de la consulta
+
+cgmod 777 mysql-files
+chown -R mysql:mysql mysql-files
+
+select * from cultivo into outfile ’/var/lib/mysql-files/cultivo.csv’ fields terminated by ’,’ lines terminated by ’\n’;
+
+********************************************************************************************
+
+//Para limpiar los archivos log
+cd /var/log/mysql/
+mv mysql.log mysql.log.old 
+mv mysql-slow.log mysql-slow.log.old 
+mv err.log err.log.old 
+mysqladmin flush-logs -u root -p
+
+********************************************************************************************
+
+//Para replicacion
+1 instalar mysql en 2 equipos
+2 en el server maestro instalar el firewall software y abrir puerto mysql
+	apt install ufw
+	sudo ufw status
+	ufw allow mysql
+	sudo service ufw restart 
+3 en el server maestro agregar para aceptar conexiones entrantes 
+	nano /etc/mysql/mysql.conf.d/mysqld.cnf
+	bind_address = 0.0.0.0
+4 Configurar el master
+5 respaldar bd a replicar
+6 en el esclavo restaurar bd
+7 configurar esclavo
+	
+//En el master
+nano /etc/mysql/mysql-conf-d/mysql.cnf
+
+//añadir
+#Configuración de replicación como Master
+log_bin           = /var/log/mysql/mysql-bin.log
+server-id         = 1
+binlog-do-db      = bdAReplicar
+sync_binlog       = 1
+
+#reiniciar servicio
+systemctl restart mysql
+
+#Ingresar al mysql master
+mysql -u root -p
+
+#Crear usuario para replicacion
+create user ‘usuario_para_replica’@’45.190.241.172’ identified by ‘abc123.’;
+
+#dar permisos
+grant replication slave on *.* to ‘usuario_para_replica’@’45.190.241.172’;
+
+#aplicar permisos
+flush privileges;
+
+#reiniciar servicio
+systemctl restart mysql
+
+#Ingresar al mysql master
+mysql -u root -p
+
+show master status;
+
+#anotamos los valores File y Position
+#en este caso   File = mysql-bin.000007     Position = 156
+
+#respaldar la Base de Datos
+mysqldump -u root -p bdAReplicar>respaldo.sql;
+
+#copiar el respaldo de la bd al server slave
+scp respaldo.sql root@45.190.241.172:/home/jangeltr
+
+//En el esclavo
+#importar la BD
+#Ingresar al mysql slave
+mysql -u root -p
+create database bdAReplicar;
+exit;
+mysql -u root -p bdAReplicar<respaldo.sql
+
+nano /etc/mysql/mysql-conf-d/mysql.cnf
+
+//añadir
+log_bin           = /var/log/mysql/mysql-bin.log
+server-id         = 2
+
+#reiniciar servicio
+systemctl restart mysql
+
+#Ingresar al mysql slave
+mysql -u root -p
+
+#detenemos el servicio slave
+stop slave;
+
+mysql> change master to
+-> master_host=’ip_servidor_master’,
+-> master_user=’usuario_esclavo’,
+-> master_password=’clave_usuario_sclavo’,
+-> master_log_file=’mysql-bin.00000X’,        #valor anotado File
+-> master_log_pos=X,           #valor anotado Position
+-> master_port=X;
+
+#Revisamos la configuracion del esclavo
+mysql> show slave status \G;
+#arrancamos el servicio esclavo
+mysql> start slave;
+#reiniciar servicio
+systemctl restart mysql
+
+********************************************************************************************
+
+

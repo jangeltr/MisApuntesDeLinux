@@ -1,0 +1,63 @@
+sudo apt update
+
+sudo apt apgrade
+
+
+
+
+//Apache
+
+sudo apt install apache2
+
+sudo nano etc/apache2/ports.conf		//cambiar el numero de puerto
+
+sudo nano etc/apache2/apache2.conf		//cambiar Timeout 60
+
+sudo nano etc/apache2/apache2.conf		//evitar muestre los directorios
+
+
+<Directory /var/www/>
+        Options Indexes FollowSymLinks		//quitar indexes
+        AllowOverride None
+        Require all granted
+</Directory>
+
+systemctl restart apache2
+
+
+
+
+//PHP on Apache2
+
+sudo apt update && sudo apt -y upgrade
+
+sudo apt -y install php php-common
+
+sudo apt -y install php-cli php-fpm php-json php-pdo php-mysql php-zip php-gd  php-mbstring php-curl php-xml php-pear php-bcmath
+
+
+
+
+
+//Nginx
+
+apt install nginx nginx-extras
+
+nano /etc/nginx/nginx.conf			//algunas configuraciones generales
+
+nano /etc/nginx/sitesvalilable/default		//Configuracion del server, puerto, 
+						//path a los sitios web, por default esta donde apache
+						//archivo de inicio, etc
+	
+//Nginx Amplify es para monitorerar Nginx
+apt install python2.7
+
+cd /etc/nginx
+
+//aqui la guia de instalacion y uso
+https://amplify.nginx.com/docs/faq-1-general.html
+
+
+
+
+

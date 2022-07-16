@@ -1,0 +1,7 @@
+https://itslinuxfoss.com/how-to-install-visual-studio-code-on-debian-11/
+
+Integrar
+slack
+Jira
+Bitbucket
+codestream

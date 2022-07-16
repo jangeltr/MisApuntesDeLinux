@@ -1,0 +1,244 @@
+﻿//para ejecutar el server >Mongod si no se pone el numero de puerto por default es 27017
+c:/>mongod --port 27018
+//el meteor por default es 3000 y el mongo para meteor 3001, es necesario ejecutar la consola como admon.
+
+//ejecutandose Mongo...  para respaldar una base de datos
+c:\meteor\mongodump --port 81 --out c:\meteor
+
+//ejecutandose Mongo...  para restaurar una base de datos
+c:\meteor\mongoRestore --port 81 c:\meteor
+
+
+//Ayuda    //https://docs.mongodb.com/
+>help
+
+//para mostrar las Bases de datos 
+>show databases
+
+//para seleccionar y trabajar con una BD --no es necesario que la base de datos exista, se creara al agregar el primer documento
+>use practica1
+
+//muestra en que BD estamos trabajando
+>db
+
+//para mostrar las colecciones en la BD 
+>show collections
+
+//para INSERTAR documentos a una coleccion --no es necesario que la coleccion exista, se creara al agregar el primer documento
+>documento={num:1, nombre:"Angel", password:"abc123.", fecha:new Date()}        //asi se crean documentos, 
+										//para ver el documento solo escribe el nombre
+										//para ver solo un atrubuto >documento.atributo
+>db.usuarios.insert(documento)
+
+>db.usuarios.insert({num:2, nombre:"Abel", password:"abc123.", fecha:new Date()})
+>db.usuarios.insert([doc1,doc2])
+>db.usuarios.insertMany([doc1,doc2])			// por default ordered = true -- los insertara en orden hasta el primer fallo
+>db.usuarios.insertMany([doc1,doc2,doc3,doc4],{$ordered:false}) 	//insertara todos excepto los que generen error
+
+ISODate("2022-05-22")
+ObjectId()
+
+//para CONSULTAR los documentos en una coleccion         find({condicion},{atributos})
+>db.usuarios.find()    			//mostrara todos los datos de todos los documentos
+>db.usuarios.fineOne()  		//mostrara el primer documento que cumpla la condicion si se pone
+>db.usuarios.find({nombre:"Angel"})	//mostrara todos los datos de todos los documentos que cumplan la condicion
+>var usuario = db.usuarios.find({nombre:"Angel"})		//asigna el docto a la variable
+>var usuario = db.usuarios.find({nombre:"Angel",num:1})         //and
+>db.usuarios.find({nombre:{$ne:"Angel"}})			//not o diferente
+>db.usuarios.find({$or:[{nombre:"angel"},{nombre:"abel"]}})	//or
+>db.usuarios.find({nombre:{$in:["angel","abel"]}})		//in   como or que el nombre se encuentre entre esos valores
+								//nin  que no se encuentre entre esos posibles valores
+>db.usuarios.find({num:{$gt:1}})				//$gt  >   ,   $gte  >=
+>db.usuarios.find({num:{$lt:2}})				//$lt  <   ,   $lte  <=
+>db.usuarios.find({num:{$gt:0,$lt:3}})				//between
+>db.usuarios.find({$and:[{num:{$gt:1}},{telefono:{$exists:true}}]})	//and
+
+>db.usuarios.find().count()					//cuenta todos los doctos en el find
+>db.usuarios.find().sort({edad: 1})				//1 ascendente, -1 descendente
+>db.usuarios.find().sort({edad: 1}).limit(3)			//los primeros 3 doctos ordenados ascendente
+>db.usuarios.find().sort({edad: 1}).skip(2).limit(3)		//los  3 doctos ordenados ascendente saltandoce los 2 primeros
+>db.bitacora.find().sort({date:-1}).limit(1)			//obtener el ultimo
+>db.usuarios.find().sort({edad: 1}).skip(2).size()		//cuantos doctos quedan en el find despues de saltar los 2 primeros
+
+>db.usuarios.find({nombre: {$regex: /torres/}})			//todos los que contengan la palabra torres en el nombre
+
+>db.usuarios.find({telefono:{$exists: true}})			//solo si tiene telefono
+>db.usuarios.find({telefono:{$exists: false}})			//solo si no tiene telefono
+>db.usuarios.find({"_id":{$type:"string"}})			//donde coincida el tipo
+
+>db.usuarios.find().pretty()
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////PROYECCIONES
+>db.usuarios.find({},{nombre:1})				//solo el atributo _id y nombre de todos los documentos
+>db.usuarios.find({},{nombre:1, _id:0})				//solo el atributo nombre de todos los documentos
+>db.usuarios.find({},{_id:0,telefono:0})			//todos los atributos excepto el id y el telefono
+
+///////////////////////////////////////////////////////////////////////////////////update
+//para ACTUALIZAR documentos   FORMA 1
+>var doc=db.usuarios.findOne({"_id" : ObjectId("6587658765465465")})
+>doc.nombre = "Angel Torres"					//si el atributo a actualizar no existe lo agrega al documento
+>db.usuarios.save(doc)     					    //si el Id del documento ya existe lo actualiza si no lo agrega
+>db.usuarios.replaceOne({"nombre":"abel"},doc)  //remplaza el primer documento que coincide, si no existe no lo agrega
+
+>db.usuarios.updateOne({"nombre":"abel"},doc)    			//la condicion primero despues el documento con el cual reemplazará
+
+>db.usuarios.update({nombre:"Angel"},{$set:{nombre:"Angel Torres"}})		//se actualizara solo el primer angel que encuentre
+>db.usuarios.updateOne({nombre:"Angel"},{$set:{nombre:"Angel Torres"}})			//igual que el anterior
+>db.usuarios.updateOne({nombre:"Angel"},{$set:{nombre:"Angel Torres"}},{upsert:true})	//si no existe lo agrega
+
+//FORMA 2
+>db.usuarios.update({nombre:"Angel"},{$set:{nombre:"Angel Torres"}},{multi:true})	//se actualizaran todos los angel que encuentre
+>db.usuarios.updateMany({nombre:"Angel"},{$set:{nombre:"Angel Torres"}})		//igual que el anterior
+
+>db.usuarios.update({nombre:"Angel"},{$set:{nombre:"Angel Torres", edad:42}},{multi:true})   //si alguna columna a actualizar no existe la agrega
+>db.usuarios.update({},{$set:{fecha:new Date()}},{multi:true})   	//agrega la fecha actual a todos los documentos
+>db.usuarios.update({},{$unset:{fecha:1}},{multi:true})   		//quita la fecha a todos los documentos
+																	//asi como esta $set tambien estan $inc que incrementa el valor en el atributo numerico especificado
+
+////////////////////////////////////////////////////////////////////////////////////////para ELIMINAR documentos, colecciones y bases de datos
+>db.usuarios.remove({nombre:"Angel Torres"})				//borra TODOS los "Angel Torres"
+>db.usuarios.remove({nombre:"Angel Torres"},{justOne:true})		//borra el primer "Angel Torres"
+>db.usuarios.remove({})							//elimina todos los documentos de la coleccion
+>db.usuarios.deleteOne()
+>db.usuarios.deleteMany()
+>db.usuarios.drop()							//elimina la coleccion
+>db.dropDatabase()							//elimina la base de datos
+
+/////////////////////////////////////////////////////////////////////////////////////////////Cursores
+>var x=db.usuarios.find()
+>x.hasNext()    		//devolvera True si le sigue otro documento
+>x.next()			//mostrara el siguiente documento
+>x.next().campo			//para acceder al valor de un campo del resultado
+>var doc=function() {return x.hasNext() ? x.next() : null;}  	//asigno a doc una funcion
+>doc		   	//retorna el codigo de la funcion
+>doc() 			//ejecuta la funcion y retorna por cada ejecucion 1 documento de la coleccion asigana a x
+>x.objsLeftInBatch()	//retorna el numero de documentos que faltan por mostrar
+>for (key in doc) print(key) 	//imprime la lista de atributos de un documento
+
+														
+////////////////////////////////////////////////////////////////////////////////////////Estadisticas
+>for (x=0;x<10000;x++){db.usuarios.insert({num:x,nombre:"Angel "+x})}
+>db.usuarios.find({nombre: "angel18790"}).explain("executionStats").executionStats.executionTimeMillis     //con estadisticas y el tiempo de ejecucion
+>db.usuarios.stats()	//estadistica de una coleccion
+>db.usuarios.explain().find({_id:5})	//a partir de la version 3 explain va antes de la consulta, explica el plan ganador de consulta
+>db.usuarios.explain(true).find({_id:5})	//agrega la estadistica de la consulta
+
+//////////////////////////////////////////////////////////////////////////////////////para INDICES
+>db.usuarios.createIndex({nombre:1})		//Crea un indice por nombre en orden acendente
+>db.usuarios.createIndex({nombre:1,ciudad:1})	//Crea un indice multi key con ambas llaves en acendente
+>db.usuarios.createIndex({nombre:1},{unique:true})	//Crea un indice que no permite valores repetidos
+>db.usuarios.createIndex({numberPhone:1},{unique:true,sparse:true})	//Crea un indice que no permite valores repetidos sobre  
+									//un atributo que no todos los documentos tienen
+>db.usuarios.ensureIndex({'descripcion':'text'})	//crea un indice tipo texto para poder hacer busquedas en el
+>db.usuarios.find({$text:{$search:'genial'}})		//busca la palabra 'genial' entre el texto del indice
+>db.usuarios.find({$text:{$search:'genial'},{score:{$meta:'textScore'}}).sort({score:{$meta:textScore}}) //muestra los documentos que
+ 							//coincidan mas el numero de veces que encuentra esa palabra, si escribes 2 
+							//palabras o mas busca las palabras por separado, no como una frace
+
+>db.usuarios.getIndexes()
+>db.usuarios.dropIndex({nombre:1})
+
+/////////////////////////////////////////////////////////////////////////////ARREGLOS
+>var arreglo = [1,2,3]
+>var usuario = {nombre : "Nombre1", valores: arreglo}
+>db.usuarios.insert(usuario)						//inserta un elemento usuario con un conjunto de valores (RDB)1:M
+>db.usuarios.update({},{$addToSet:{valores:4}})				//agrega un elemento al arreglo pero si no existe, si ya existiera no lo agrega
+>db.usuarios.update({},{$push:{valores:4}})				//agrega un elemento al arreglo sin importar si ya existe
+>db.usuarios.update({},{$addToSet:{valores:{$each:[5,6,7]}}})		//agrega un conjunto de elementos al arreglo de valores
+>db.usuarios.update({},{$push:{valores:{$each:[8,9,10],$position:4}}})	//agrega un conjunto de elementos al arreglo de valores en una posicion determinada pero solo funciona con push   				********investigar y probar $position
+
+>db.usuarios.update({},{$push:{valores:{$each:[8,9,10],$sort:1}}})	//agrega un conjunto de elementos al arreglo de valores y ordena el arreglo
+
+>db.usuarios.update({},{$pull:{valores:10}})				//busca el valor 10 en el arreglo y lo elimina
+>db.usuarios.update({},{$pull:{valores:{$gte:8}}})			//busca los valores >= que 8 y los elimina
+>db.usuarios.update({},{$pullAll:{valores:[4,5]}})			//elimina un conjunto de valores
+
+>db.usuarios.find({},{_id:false,valores:{$slice:3}})			//muestra solo el etributo valores (los primeros 3 elementos del arreglo)
+>db.usuarios.find({},{_id:false,valores:{$slice:[1,4]}})		//muestra solo el etributo valores (del indice 1 al 4 del arreglo)
+>db.books.find({"writers":["Joel Coen","ethan Coen"]})			//muestra los libros que tienen unicamente esos 2 escritores y en ese orden
+>db.books.find({"writers":"Joel Coen"})					//Muestra los libros que tienen a Joel Coen entre su lista de escritores
+>db.books.find({"writers.0":"Joel Coen"})				//muestra los libros que tienen a Joel Coen como escritor en la posicion 0 del arreglo
+>db.usuarios.find({"telefono.tipo":{$all:["cel","home","office"]}})	//muetra los que tienen los 3 tipos de telefono
+>db.usuarios.find({telefono:{$size:1}})					//los que en el arreglo de telefonos solo hay 1
+									********investigar si se puede aplicar $gte o $lte
+resumenAsig3.update({},{$pull:{'materia':{revisado:false}}},{multi:true})//dentro del arreglo de documentos "materia" quitara los que en revisado tengan false
+
+
+//////////////////////////////////////////////////////////////////////////DOCUMENTOS ENBEBIDOS
+>db.usuarios.insert({nombre:"Angel",domicilio:{calle:"Lazaro Cardenas 345",poblacion:"San Lucas Evangelista"}})
+>db.usuarios.find({"domicilio.poblacion":"San Lucas Evangelista"},{"nombre":true,"domicilio.calle":true})
+>db.usuarios.update({nombre:"Angel"},{$set:{"domicilio.calle":"Madero 48"}})
+
+////////////////////////////////////////////////////////////////////////////arreglo de doctos enbebidos
+>tel1 = {"tel":"33343536","tipo":"cel"}
+>tel2 = {"tel":"33343536","tipo":"casa"}
+>tel3 = {"tel":"33343536","tipo":"oficina"}
+>db.usuarios.update({nombre:"Angel"},{telefonos:[tel1,tel2,tel3]})
+>db.usuarios.find({telefonos:{$elemMatch:{tipo:"cel",number:'3339549419'}}})	//en un arreglo de documentos deben coincidir los 2 datos 
+									//del mismo documento
+
+//////////////////////////////////////////////////////////////////////////////AGGREGATE FRAMEWORK
+>db.usuarios.aggregate([{$group:{_id:"$nombre"}}])	//Consulta todos los documentos agrupando por el atributo nombre, de esta manera no los repite
+>db.usuarios.aggregate([{$group:{_id:"$nombre","cantidad":{$sum:1}}}])	//los agrupa por nombre y los cuenta
+>db.usuarios.aggregate([{$group:{_id:"$nombre","cantidad":{$sum:2},"suma":{$sum:"$valor"}}}])	//ademas de contarlos, suma todos los valores del atributo valor
+>db.usuarios.aggregate([{$group:{_id:"$nombre","cantidad":{$sum:2},"promedio":{$avg:"$valor"}}}])	//agrupa, cuenta, y saca el promedio
+
+>db.grades.aggregate([{'$group':{'_id' : '$student_id', 'average' : {$avg : '$score'}}}, {$sort : {'average' : -1}},{$skip:10},{'$limit' : 1 }])
+>db.products.aggregate([{$group:{_id:{maker:'$manufacturer',category:'$category'},num_products:{$sum:1}}}])
+>db.zips.aggregate([{$group:{"_id":"$state","population":{$sum:"$pop"}}}])	//suma la acantidad de habitantes por estado
+>db.products.aggregate([{$group:{_id:"$manufacturer",categories:{$addToSet:"$category"}}}])	//sale una coleccion con los fabricantes y un arreglo
+									// dentro de cada fabricante con las categorias de prodcutos sin repetirlas 
+
+>db.fun.aggregate([{$group:{_id:{a:"$a", b:"$b"}, c:{$max:"$c"}}}, {$group:{_id:"$_id.a", c:{$min:"$c"}}}])	//sobre una agrupacion se hace otra
+
+>db.zips.aggregate([{$project:{_id:0, city:{$toLower:"$city"}, pop:1, state:1, zip:"$_id"}}])	//A partir de una coleccion proyectar una nueva con cambios
+								//sin el id original, city en minusculas, poblacion original, zip sera el id
+>db.zips.aggregate([{$match:{pop:{$gt:100000}}},{$group:{}},{$project:{}}]) 	//no esta completa, match selecciona documentos sobre los cuales ara 
+								//la agrupacion y por ultimo la proyeccion
+>db.zips.aggregate([{$unwind:'$comments'}])  			//saca todos los elementos del arreglo comments para poder agrupar
+>db.zips.aggregate([{$unwind:'$comments'},{$group:{_id:'$comments.author',cantidad:{$sum:1}}}])	// los saca del arreglo y agrupa contando
+>db.zips.aggregate([{$group:{  ...   }},{$out:'sumary_result'}])	//Crea una coleccion con el resultado de salida y la de salida ya existe la borra
+
+
+//////////////////////////////////////////////////////////////////////////////////////////COMANDOS EXTERNOS
+c:>mongo < archivo_java_script.js	//ejecuta un archivivo de javascript en la terminal de mongo
+c:>mongodump --db test --collection collection	//respaldo la base de datos
+c:>mongorestore dump 			//dump es la carpeta donde esta el respaldo
+c:>mongoimport --db school --collection students --file students.json
+c:>mongoexport --db sales --collection contacts --out contacts.json
+c:>mongoimport --port 81 --db meteor --collection alumnos --file alumnos.json --jsonArray
+
+//para registro de consultas //Profiles
+c:>mongod -dbpath /usr/local/var/mongodb --profile 1 --slowms 2	//Profile :0 no registra, 1 consultas lentas, 2 todas las consultas
+>db.system.profile.find().pretty()
+>db.getProfilingLevel()			//consultar el nivel del profile
+>db.getProfilingStatus() 		//consulta nivel del profile y tiempo de consultas a registrar
+>db.setprofilingLevel(1,4)		//establece el nivel a 1 y a 4 el tiempo para registrar las consultas lentas
+>db.system.profile.find( { millis : { $gt:1000 } } ).sort( { ts : -1 } ) 	//Consulta en el profile las consultas mayores a 1 segundo
+
+c:>mongostat 		//muestra estadisticas de mongod 
+
+
+
+
+var asigs=db.asignaciones.find();
+while (asigs.hasNext()){
+  var asig=asigs.next();
+  for(i=0;i<asig.materia.length;i++){
+	asig.materia[i].id=ObjectId().str; 
+  }
+  db.asignaciones.save(asig);
+}
+
+//Para importar un script de java desde dentro del shell de mongo
+load('c:/Users/Angel Torres/validateLab1.js')
+
+var pipeline = [{$match:{'imdb.rating':{$gte:7},'genres':{$nin:['Crime','Horror']},$or:[{'rated':'PG'},{'rated':'G'}],'languages':{$all:['English','Japanese']}}},{$project:{_id:0,title:1,rated:1}}]
+
+var pipeline2 = [{$project:{titulo:{$split:["$title"," "]}}},{$project:{tamTitle:{$size:"$titulo"}}},{$match:{tamTitle:1}}]   //hago con $split un arreglo de titulo con una palabra en cada posicion, pongo en tamtitle el tamaño del arreglo
+															      //por ultimo selecciono los que el tamaño sea uno, esto me da todas las peliculas con titulo de 1 palabra
+{ $match: { writers: { $elemMatch: { $exists: true } } }
+
+var pipeline = [{$match:{countries:"USA","tomatoes.viewer.rating":{$gte:3}}},{$addFields:{num_favs:{$size:"$cast"}}},{$sort:{num_favs:-1,"tomatoes.viewer.rating":-1,title:-1}},{$skip:24},{$limit:1}]
+
+db.movies.aggregate(pipeline).itcount()

@@ -1,0 +1,31 @@
+sudo apt update
+sudo apt install nodejs npm
+
+node -v
+
+
+//para ejecutar un archivo
+node archivo.js
+
+/ara instalar paquetes al node
+//-g para que sea global
+
+//nodemon es un demonio que estara ejecutando automaticamente ante cualquier modificacion al
+//archivo que se esta ejecutando, al guardar.
+npm install -g nodemon
+
+nodemon archivo.js	//para ejecutar archivos
+
+npm install -g pm2 	//otro paquete para monitorear y ayudar a corregir eerorres en aplicaciones en produccion
+
+//para introducir parametros al ejecutar un programa
+NOMBRE=Angel node archivo.js
+//desde dentro del archivo en javascript
+let nombre = process.env.Nombre || ‘Sin nombre’  //Asigna Valor o si no hay asigna sin nombre
+
+ 
+
+
+
+
+

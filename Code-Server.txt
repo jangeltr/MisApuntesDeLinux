@@ -1,0 +1,36 @@
+//Cambiar a usuario root y agregar el guion -
+
+su -
+
+//dentro de la carpeta root
+
+curl -fOL https://github.com/cdr/code-server/releases/download/v3.9.1/code-server_3.9.1_amd64.deb
+
+dpkg -i code-server_3.9.1_amd64.deb
+
+//debe haber un servicio asi: code-service@.service  en: lib/systemd/system/ renombrarlo a:
+code-service.service
+mv code-service@.service code-service.service
+
+//debe haber un servicio asi: code-service.service  en: lib/systemd/system/ con: 
+
+[Unit]
+Description=code-server
+After=network.target
+
+[Service]
+Type=exec
+Environment=PASSWORD=Mitssy0612
+ExecStart=/usr/bin/code-server --bind-addr 127.0.0.1:4000 --user-data-dir /var/www/html --auth password
+Restart=always
+User=root
+
+[Install]
+WantedBy=default.target
+
+
+
+To make code-server start automatically after a server reboot, enable its service by running the following command:
+sudo systemctl enable code-server
+
+

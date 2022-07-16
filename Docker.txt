@@ -1,0 +1,160 @@
+DOCKER
+mi cuenta en docker: jangeltr
+mi correo en docker: jangeltr@gmail.com
+password: la buena
+
+proceso de instalación
+https://docs.docker.com/engine/install/debian/
+
+docker run help   	//probar su instalacion con ayudas
+
+docker   		//para ver la lista de parametros de docker y todas las posibles opciones
+
+****************************************************************************
+TRABAJAR CON IMAGENES
+docker images        	//para ver una lista de las imagenes en mi maquina local
+docker pull imagen	//obtener una imagen del registry dockerhub: hub.docker.com
+docker build -t nombreImagen:version .	//construir imagen de docker a partir de un dockerfile
+					// . donde se encuentra el dockerfile (carpeta actual)
+docker rmi imagenID	//eliminar una imagern de la pcLocal
+*****************************************************************************
+CONTENEDORES
+docker run -d imagen		//para iniciar un contenedor, el -d es para iniciarlo como proceso independiente
+docker run -it debian bash 	//para iniciarlo en modo interactivo
+docker ps			//ver los contenedores que se encuentran corriendo
+docker ps -a			//ver los contenedores, los que estan corriendo y los que no
+docker run -d --name nombreContenedor nombreImagen
+				//iniciar un contenedor con un nombre especifico para poder usarlo con ese nombre
+docker logs nombreContenedor	//ver logs de un contenedor
+docker top idContenedor   	//ver que procesos se estan ejecutando dentro del contendor 
+docker exec nombreContenedor ls	//ejecuta un comando dentro del contenedor
+docker exec -it nombreContenedor bash	//ingresar en el contenedor para ejecutar comandos dentro
+docker stop nombreContenedor	//detener el contenedor pero no lo elimina
+docker start idContainer		//iniciar el contenedor
+docker rm nombreContenedor	//elimina un contenedor que fue detenido
+docker run -d --rm --name nombreContenedor nombreImagen		//--rm elimina el contenedor cuando lo detienes
+docker run -d --rm -p 80:80 --name nombreContenedor nombreImagen
+				//-p es para poner a servir tu contenedor por un puerto, puertoPC:puertoContenedor
+docker run -d --rm -p 80:80 -v /Home/Documents/miWeb:/usr/share/nginh/html --name nombreContenedor nombreImagen
+				//redireccionar un directorio del contenedor a uno del equipo local
+				//-v directorioLocal:directorioContenedor
+docker run -d --rm --net=nombreRed --name nombreContenedor nombreImagen
+				//--net asociar el contenedor a una red determinada
+docker run -d --rm -p 80:80 –name nomContenedor -e MSG=’valor’ nombreImagen
+				//-e pasa nuevos valores a variables de entorno definidas en la imagen, MSG es la varible
+docker stop $(docker ps -q) -f	//el comando interno devuelve los ids, el externo los detiene, -f Forza la accion
+***************************************************************************************
+VOLUMENES
+docker volume ls				//ver lista de volumenes
+docker volume create nombreVolumen		//crear un volumen
+docker run -d --rm -p 80:80 –mount source=nombreVolumen,target=/usr/share/nginx/html --name nameContendor nombreImagen
+						//monta un volumen en una ruta del contenedor, toda la info que ponga en la ruta del contenedor
+						//sera persistente porque tiene asociado un volumen
+docker volume rm nombreVolumen	//eliminar un volumen
+****************************************************************************************
+REDES
+docker network ls	//consultar las redes de docker
+docker network inspect nombreRed	//inspeccionar la red, para ver las ip de los contenedores asociados a esta red
+docker network create -d bridge nombreRed	//crea red tipo bridge
+docker network connect bridge nombreRed	//interconectar la red bridge default con otra para poder comunicar dos
+ 					//contenedores de redes distintas
+****************************************************************************************
+DOCKERFILE
+Dockerfile	//es un archivo de texto donde se especifican los parametros de creacion de una imagen.
+		//se llama Dockerfile y no tiene extension
+
+//contenido
+FROM debian				//imagen base
+
+RUN apt update				//comando a ejecutar dentro de la imagen al crear la imagen
+RUN apt install python3 python3-dev -y	//agregarle apps a la imagen
+RUN apt install postgresql-client -y
+RUN mkdir /app				//crea una carpeta
+
+WORKDIR  /app				//define esa carpeta como directorio de trabajo
+
+ENV MSG=’Saludos a todos’		//Define variables de entorno y su valor
+
+ADD index.html .			//agrega o copia archivos o directorios al workdir de la imagen
+
+CMD python3 -m http.server 5000		//comando que se ejecuata cuando se corre el contenedor,
+					//en este ejemplo levanta un server web con python en el puerto 5000
+
+EXPOSE 5000				//pone a disposicion el puerto 5000
+*****************************************************************************************
+FROM php:7.3-apache
+
+RUN docker-php-ext-install -j$(nproc) pdo		//extenciones necesarias para conectarse desde php a mysql
+RUN docker-php-ext-install -j$(nproc) pdo_mysql
+*****************************************************************************************
+DOCKER HUB
+//1. iniciar sesion en el sitio docker hub.
+//2. crear un repositorio en docker hub. El repositorio se llamara: nombreRepositorio
+//3. copiar el nombre completo del repositorio: cuentaDeUsuario/nombreRepositorio
+//4. en la compu local …..
+docker login 	//iniciar sesion en docker hub, pedira nombre de usuario y contrasena
+docker tag nombreImagenLocal cuentaDeUsuario/nombreRepositorio:1.0
+//5. docker image ls
+Aparerce una nueva imagen etiquetada (tageada) como cuentaDeUsuario/nombreRepositorio:1.0
+//6. subir la imagen al dockerhub
+docker push cuentaDeUsuario/nombreRepositorio:1.0
+//
+docker pull imagen	//obtener una imagen del registry dockerhub: hub.docker.com
+**************************************************************************
+DOCKER COMPOSE
+//crea la imagen y levanta el contenedor, automaticamente crea la red para los diferentes contenedores
+//crea un dns para interconectarse desde un contenedor al servicio del otro contenedor usando el nombre del servicio 
+//1. Intalar python
+apt install python3 python3-dev python3-pip -y
+//2. usar el instalador de paquetes de python PIP para instalar el docker compose
+pip install docker-compose
+//3. crear un archivo llamado: docker-compose.yml
+//los valores de ports y environment entre otros estan especificados en el siito dockerhub de cada imagen
+//contenido del archivo….
+
+version: “3”		//version del docker compose
+services:
+	web:		//nombramos el servicio, para que corra como servicio
+		container_name: nombre-contenedor
+		build: . 	//contexto de construccion, donde esta el dockerfile para crear imagen docker, el “.” es en la ruta 
+			//actual
+		image: 	nombreImagen:version		//nombre de la imagen a contruir
+		ports:
+			- 5000:5000
+		environment:	//aqui en realidad son variables de construccion 
+			MSG: ‘Saludos a todos desde compose’
+		volumes:
+			- carpetaLocal:workDir	//al crear la imagen enlaza el contenido de la carp local a la de la
+ 						//imagen
+	db:	//para este servicio debe existir la imagen, no tiene build, ya que para build se requiere Dockerfile 
+		image: postgres
+		restart: always
+		//cuando no se especifica ports expone el puerto por default de la app
+		environment:	//variables de construccion. 
+			POSTGRES_PASSWORD: example	//para definir la contrasena del postgress
+		volumes:
+			- data:/var/lib/postgresql/data	//- nombreVolumen: ruta del contenedor donde se guardan los
+							//datos de la BD para hacerlos persistentes en un volumen
+volumes:
+	data:	//nombreVolumen
+	driver: local
+
+
+
+//4. ejecutar el archivo docker-compose.yml y levanta los servicios
+docker-compose up -d 		//cuando no existe la imagen la crea, si ya existe no.
+docker-compose up -d --build	//cuando hacemos cambios al archivo Dockerfile y queremos que reconstruya la imagen
+//detiene y elimina los servicios
+docker-compose down
+
+//5. para entrar al contenedor con docker-compose
+docker-compose run nombreServicio bash
+
+
+
+
+
+
+
+
+

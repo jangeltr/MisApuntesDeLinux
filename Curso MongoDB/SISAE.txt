@@ -1,0 +1,71 @@
+//////////////////////////////////////////////Para actualizar fechas en HORARIOS
+
+db.horarios.update({'periodo':'Ago-dic 2021','fecha':{$gt:ISODate('2021-08-16T00:00:00.000Z')}},{$set:{fecha:new Date('2021-08-16')}},{multi:true});
+
+//////////////////////////////////////////////Para actualizar fechas en REPORTE
+
+db.reporte1.update({'periodo':'Ene-Jun 2022','fecha':{$gt:ISODate('2022-03-11T00:00:00.000Z')}},{$set:{fecha:new Date('2022-03-11')}},{multi:true});
+
+db.reporte2.update({'periodo':'Ene-Jun 2022','fecha':{$gt:ISODate('2022-04-08T00:00:00.000Z')}},{$set:{fecha:new Date('2022-04-08')}},{multi:true});
+
+db.reporte3.update({'periodo':'Ene-Jun 2022','fecha':{$gt:ISODate('2022-05-20T00:00:00.000Z')}},{$set:{fecha:new Date('2022-05-20')}},{multi:true});
+
+//////////////////////////////////////////////Para actualizar fechas en INSTRUMENTACIONES
+
+db.asignaciones.find({'periodo':'Ene-Jun 2022','materia.fechaPlaneacion':{$gt:ISODate('2022-02-12T00:00:00.000Z')}}).forEach(function(r1){r1.materia.forEach(function(r2){if (r2.fechaPlaneacion>ISODate('2022-02-12T00:00:00.000Z')){db.asignaciones.update({_id:r1._id,materia:{$elemMatch:{id:r2.id,grupo:r2.grupo}}},{$set:{'materia.$.fechaPlaneacion':new Date('2022-02-12')}})}})});
+
+db.asignaciones.find({'periodo':'ENE-JUN 2021','materia.fechaPlaneacion':{$gt:ISODate('2021-03-06T00:00:00.000Z')}}).forEach(function(r1){
+	r1.materia.forEach(function(r2){
+		if (r2.fechaPlaneacion>ISODate('2021-03-06T00:00:00.000Z')){
+			db.asignaciones.update({_id:r1._id,materia:{$elemMatch:{id:r2.id,grupo:r2.grupo}}},{
+				$set:{
+					'materia.$.fechaPlaneacion':new Date('2021-03-06')
+				}
+			})
+		}
+	})
+});
+////////////Para un docente pero corregir lo del id entre comentarios
+db.asignaciones.findOne({'periodo':'ENE-JUN 2021','materia.fechaPlaneacion':{$gt:ISODate('2021-03-06T00:00:00.000Z')}}).materia.forEach(function(r2){if (r2.fechaPlaneacion>ISODate('2021-03-06T00:00:00.000Z')){db.asignaciones.update({'_id'://idAsignacionencontrada//,materia:{$elemMatch:{id:r2.id}}},{$set:{'materia.$.fechaPlaneacion':new Date('2021-03-06')}})}});
+
+//////////////////////////////////////////////Para actualizar los SEMESTRES CON TUTORIA
+db.users.find({'roles.SISAE':'Alumno'}).forEach(function(r)
+	{
+		if (r.profile.semestre<7)
+			db.users.update({_id:r._id},
+					{$set:{'profile.semestresConTutoria':r.profile.semestre}},
+					{multi:true})
+		else
+			db.users.update({_id:r._id},
+					{$set:{'profile.semestresConTutoria':6}},
+					{multi:true})
+	}
+);
+
+db.users.find({'roles.SISAE':'Alumno','profile.semestresConTutoria':'0'}).forEach(function(r)
+	{
+		r.profile.semestresConTutoria=new NumberInt(r.profile.semestresConTutoria);
+		db.users.save(r)
+	}
+);
+
+//////////////////////////////////////////////Para eliminar el archivo de identificacion personal de un tutorado
+db.tutorias.update({'docenteTutor':'ABEL RAMIREZ MOLINA','periodo':'Ago-dic 2020',alumnos:{$elemMatch:{'fechaFichaIdentificacion':{$exists:true}}}},{$unset:{'alumnos.$.fechaFichaIdentificacion':1}});
+//////////////////////////////////////////////Para corregir el nombre de una materia asignada porque despues de haber sido asignada le cambiaron el nombre
+db.asignaciones.updateOne({"periodo":"Ene-Jun 2022","docente":"DIANA MARIA RIVERA RODRIGUEZ",materia:{$elemMatch:{nombre:'Uso Eeficiente del Agua'}}},{$set:{'materia.$.nombre':'Uso Eficiente del Agua'}})
+
+//////////////////////////////////////////////Para pasar los informes de residencias de residencias a repositorios
+db.residencias.find({'expedienteEvaluacion.pathInformeTecnico':{$exists: true}}).forEach(function(r){
+  db.informeResidencias.insert({'ciclo':r.periodo,
+  				'nc':r.residente.nc,
+  				'nombre':r.residente.nombre,
+  				'carrera':r.residente.carrera,
+  				'proyecto':r.solicitud.nombreProyecto,
+  				'path':r.expedienteEvaluacion.pathInformeTecnico,
+  				'numDescargas':0})
+})
+
+db.residencias.find({'expedienteEvaluacion.pathInformeTecnico':{$exists: true}}).forEach(function(r){db.informeResidencias.insert({'ciclo':r.periodo,'nc':r.residente.nc,'nombre':r.residente.nombre,'carrera':r.residente.carrera,'proyecto':r.solicitud.nombreProyecto,'path':r.expedienteEvaluacion.pathInformeTecnico,'numDescargas':0})})
+
+//////////////////////////////////////////////Para obtener datos solicitados por la oficina de residencias
+db.residencias.find({"periodo" : "Ene-Jun 2022"},{_id:0,'residente.nc':1,'residente.nombre':1,'residente.email':1,'empresa.nombre':1,'empresa.email':1,'empresa.telefono':1,'asesor.nombre':1}).toArray()

@@ -1,0 +1,29 @@
+//para ejecutar mongo en modo seguro
+c:>mongod  --auth
+
+//se debe crear un primer usuario para una base de datos iniciando sesion de modo local
+c:>mongo
+>use admin
+>db.createUser({user:'root',pwd:'abc123.',roles:[{role:'userAdminAnyDatabase',db:'admin'}]})
+>db.createUser({user:'angel',pwd:'abc123.',roles:[{role:'root',db:'admin'}]})
+
+>db.createUser({user:'angel',pwd:'abc123.',roles:[{role:'readWrite',db:'practica1'}]})
+
+//Crear usuario sobre la bd en la que se trabaja
+use products
+db.createUser({user: "angel",pwd: 'abc123.',roles: [ "readWrite", "dbAdmin" ]})
+
+//ver lista de usuarios de la bd en uso
+>show users 
+
+//al crear el primer usuario o en sesiones posteriores a haber creado un usuario
+//al estar ya dentro de mongo
+//se usa una base de datos y luego se autentifica
+>use admin
+>db.auth({user:'root',pwd:'abc123.'})
+
+//para iniciar sesion desde que se ejecuta mongo
+//>mongo basedatos -u usuario -p contraseña
+>mongo admin -u root -p abc123.
+
+>mongo admin -u angel -p abc123. --port 8081

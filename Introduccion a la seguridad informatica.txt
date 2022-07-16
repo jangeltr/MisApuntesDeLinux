@@ -1,0 +1,114 @@
+*****************************************************************************************************************************************************************
+La Seguridad Informática tiene dos objetivos importantes:
+
+Proteger la infraestructura tecnológica
+Proteger la información
+Además, un Sistema de Información se compone de cuatro elementos fundamentales:
+
+Información: Los activos que necesitan las compañías para tomar sus decisiones de negocio.
+Usuarios: Son los que interactúan y tratan directamente con la información para crear los datos que la compañía necesita.
+Tecnologías de Información: El entorno y los elementos que necesitamos para que el sistema funcione.
+Infraestructura Física: Las instalaciones físicas dónde están albergados los servidores y sus elementos. Debemos garantizar el acceso restringido y las condiciones climáticas adecuadas.
+*****************************************************************************************************************************************************************
+Los principios fundamentales de la información cuenta con tres pilares:
+
+Confidencialidad: Esto nos habla de que la información siempre debe ser consultada por usuarios previamente autorizados, legítimos y que necesitan acceder a la información.
+Disponibilidad: La información debe estar al momento en que se requiere, debe estar disponible para ser consultada.
+Integridad: Los datos deben ser modificados por funcionarios y procesos debidamente autorizados.
+*****************************************************************************************************************************************************************
+Conceptos
+
+Activo: Cualquier dato, dispositivo u otro componente del entorno que apoya actividades relacionadas con la información.
+
+Amenaza: Circunstancia que tiene el potencial de causar daños o pérdidas
+
+Ataque: Acción organizada con intención de causar daños o problemas a un sistema informático o red.
+
+Control: Acción que se implementa para evitar la materialización de un riesgo.
+
+Impacto: Efecto económico, operativo o reputacional causado por la materialización del riesgo.
+
+Riesgo: “Evento o condición incierta que, si se produce tiene un efecto positivo o negativo en los objetivos de un proyecto”. PMBOK Guide
+
+Vulnerabilidad: Debilidad del sistema informático que puede ser utilizada para causar daño.
+*****************************************************************************************************************************************************************
+Principios básicos en la Seguridad Informática:
+
+Mínimo privilegio: Al usuario se le deben entregar unos permisos para los que están contratados, los necesarios para desarrollar sus funciones dentro de una organización. Ni más ni menos de lo solicitado.
+
+Eslabón más débil: La seguridad de un sistema es tan fuerte como su parte más débil. Un atacante primero analiza cuál es el punto más débil del sistema y concentra sus esfuerzos en ese lugar. Los atacantes siempre va a buscar al usuario.
+
+Proporcionalidad: Las medidas de seguridad estarán en correspondencia con la importancia de lo que se protege y con el nivel de riesgo existente
+
+Dinamismo: La seguridad informática no es un producto, es un proceso. No se termina con la implementación de los medios tecnológicos, se requiere permanentemente monitoreo y mantenimiento.
+
+Participación Universal: Es necesario contar con una participación activa de los colaboradores internos para apoyar el sistema de seguridad establecido. Todos lo usuarios deben estar protegidos y participes del proceso de Seguridad Informática
+*****************************************************************************************************************************************************************
+En este modelo TCP/IP también estamos hablando de capas, ya no son siete sino que son 4.
+
+Acceso a Red: Establecemos reglas de envío.
+Internet: Se encarga de la salida de paquete de datos.
+Transporte: Direccionamiento y mejor ruta, esta se encarga de llevar un mejor flujo de datos.
+Aplicación: Interactúa con el usuario por medio de los protocolos como SMTP, FTP, Telnet, etc
+*****************************************************************************************************************************************************************
+Los protocolos fueron desarrollados a mediados de la década de los 70 como parte del proyecto DARPA, una agencia de los Estados Unidos que se encarga de todos los elementos de seguridad nacional. Ellos necesitaban la capacidad de interconectar redes y lo solucionaron, en parte, gracias a los protocolos TCP/IP.
+
+Estos protocolos ahora son un estándar y utilizamos diferentes tecnologías o arquitecturas para comunicarnos a través de redes en nuestras organizaciones, incluso, entre diferentes organizaciones. Por ejemplo, cuando usamos los servicios web de nuestras empresas.
+
+Recuerda tener muy presentes estos grupos y protocolos porque su nivel determina qué tan vulnerables son nuestros los servicios de comunicación de nuestras compañías. Los debemos configurar de forma que garanticen la seguridad del sistema.
+*****************************************************************************************************************************************************************
+El Modelo OSI lo componen siete capas.
+
+En la capa Física definimos los cables, el medio de transmisión que vamos a utilizar, la radiofrecuencias a manejar, aspectos físicos.
+
+En la capa de Enlace de Datos trabajos los switches, los elementos que van a poder interconectar segmentos de la red.
+
+En Red hablamos de direccionamiento IP, Enrutamiento
+
+En la capa de Transporte, TCP-UDP siendo estos otros protocolos.
+
+En la capa de Sesión, veremos como se comunican y como administramos las sesiones entre host
+
+En la capa de Presentación, estandarización de la forma en que se presentan los datos.
+
+En la capa de Aplicación, ya es donde nuestras aplicaciones interactúan directamente con los usuarios
+*****************************************************************************************************************************************************************
+Aspesctos de seguridad que debemos tener en cuenta en las tres primeras capas. Física, Enlace de Datos y Red.
+
+Capa Física: Tenemos dos tipos de elementos que debemos tener en cuenta a la hora de configurar.
+
+Mecánicos:
+– Medio de transmisión
+– Canal de comunicaciones, fibra óptica, enlace dedicado.
+Eléctricos:
+– Potencia
+– Regulación de frecuencia
+Capa de Enlace:
+
+Control de direcciones de Hardware
+Auditoría de configuración de Bridge o Switch
+Análisis de tráfico y colisiones
+Detección de Sniffers
+Evaluación de puntos de acceso WiFi
+Evaluación de dispositivos Bluetooth
+Capa de Red:
+
+Auditorías en Router
+Auditorías de tráfico ICMP
+Auditoría ARP
+Auditoría de direccionamiento IP
+*****************************************************************************************************************************************************************
+
+*****************************************************************************************************************************************************************
+
+*****************************************************************************************************************************************************************
+
+*****************************************************************************************************************************************************************
+
+*****************************************************************************************************************************************************************
+
+*****************************************************************************************************************************************************************
+
+*****************************************************************************************************************************************************************
+
+
