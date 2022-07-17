@@ -12,12 +12,37 @@ npm -v		//para ver la version de npm
 //nodemon es un demonio que estara ejecutando automaticamente ante cualquier modificacion al
 //archivo que se esta ejecutando, al guardar.
 npm install -g nodemon
-
-nodemon archivo.js	//para ejecutar archivos
-
-npm install -g pm2 	//otro paquete para monitorear y ayudar a corregir eerorres en aplicaciones en produccion
-
+npm install -g pm2 		//otro paquete para monitorear y ayudar a corregir eerorres en aplicaciones en produccion
 npm install -g nmp@latest	//Para buscar si hay una version mas reciente de npm e instalarla
+npm list -g --depth 0		//para ver la lista de paquetes instalados de froma global
+npm list			//mustra toda la lista de paquetes que tiene el proyecto
+
+npm install moment 		//para manejo de fechas
+npm i moment -S			//dependencia que se instala indicando que sera parte del proyecto igual que linea anterior
+npm install date-fns --save-dev	//tambien para manejo de fechas pero que solo sera usada durante el desarrollo
+npm i date-fns -D		//hace lo mismo que la linea anterior
+
+nmp i <paquete> -O		//instalacion como dependencia Opcional
+npm i <paquete> --dry-run	//simula la instalacion, nos da el output, pero no se instala el paquete
+				//podemos en base a la salida del comando decidir se se instala o no
+npm i --force <paquete>		//forzar que se instale la ultima version desde los servidores nmp
+npm i -f <paquete>		//igual que la linea anterior
+
+npm install 			//reviza el archivo pakage y reinstala todo los paquetes
+
+npm fund			//muestra los paquetes que piden una aportacion economica voluntaria
+
+npm i json-server@0.15.0	//instala una version particular de un paquete.
+
+npm outdate			//lista de paquetes desactualizados
+npm outdate --dd		//corre un script en background para ver un output de todo lo que esta sucediendo
+				//con el outdate
+npm update			//actualiza los paquetes desactualizados
+npm i json-serevr@latest	//actualiza un paquete en especifico a la version mas nueva
+
+npm uninstall <paquete>		//desinstalar un paquete
+npm uninstall <paquete> --no-save	//borra el paquete de nodemodules pero no lo quita del archivo package
+
 
 ******************************************************************************************************************
 
@@ -27,6 +52,8 @@ npm init	//inicializar el proyecto, pedira algunos datos generales del proyecto
 
 //para ejecutar un archivo
 node archivo.js
+
+nodemon archivo.js	//para ejecutar archivos, si se tiene instalado el paquete nodemon
 
 //para introducir parametros al ejecutar un programa
 NOMBRE=Angel node archivo.js
