@@ -205,11 +205,15 @@ find TecNM-Tlajomulco\ Dic\ 18-2020/ -type f -exec chmod 644 {} \;
 						//Cambia los permisos de todos los archivos en esa carpeta y subcarpetas
 chmod -R <permissionsettings> <dirname>		//Cambia los permisos del folder y TODO su contenido
 
+letras usadas a continuacion u=usuario, g=group, o=others, a=all
+chmod u+x archivo.txt		//da permiso de ejecucion al usuario
+chmod g-w archivo.txt		//quita permisos de escritura al grupo
  ***************************************************************************************************************
  
  //Utilidades de Red
 sudo ifconfig				//muestra informacion de red, si no esta instalarlo asi
 					//sudo apt install net-tools
+ip a					//muestra informacion de red sin instalar nada
 ping www.google.com			
 curl www.google.com > index.html	//trae el archivo de del sitio web que responda y lo pone en index
 curl -I www.google.com			//trae las cabeceras del archivo como tipo de webserver, etc
@@ -385,6 +389,10 @@ cat /proc/cpuinfo | grep “processor” 	//Usa pipeline para mandar la salida a
 du					//para ver el tama;o de cada directorio en el disco duro
 du -hsc /home/angel/			//para ver el tama;o de ese directorio
 
+sudo journalctl –disk-usage
+sudo journalctl –list-boots		//lista los reinicios del SO
+
+***************************************************************************************************************
 //Procesos
 ps				//muestra los procesos corriendo actualmente
 ps auxf				//muestra los procesos con mas datos en forma de columnas 
@@ -395,16 +403,9 @@ top				//muestra los procesos que usan mas recursos
  				//de opciones, damos Esc y luego cualquier opcion como u pra ver los procesos 
 				//de solo un usuario solicitado.
 htop				//version mejorada de top pero hay que instalarlo
-sudo journalctl –disk-usage
-sudo journalctl –list-boots	//lista los rerinicios del SO
 
 ***************************************************************************************************************
 
 ***************************************************************************************************************
-
-***************************************************************************************************************
-
-
-
 
 
