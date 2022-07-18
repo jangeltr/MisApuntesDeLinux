@@ -5,6 +5,7 @@ node -v		//para ver la version de node
 
 npm -v		//para ver la version de npm
 
+npm install -g npm	//actualizar npm
 ******************************************************************************************************************
 
 //para instalar paquetes al node
@@ -61,10 +62,35 @@ NOMBRE=Angel node archivo.js
 let nombre = process.env.Nombre || ‘Sin nombre’  //Asigna Valor o si no hay asigna sin nombre
 
 ******************************************************************************************************************
-
+Semantica del versionado
+package.json
+simbolos en el numero version del paquete
 
 
 ******************************************************************************************************************
 
+npm cache clean --force		//elimina el cache del sistema
+npm cache verify		//verificar que la cache esta limpia
 
+rm -rf node_modules		//elimina la carpeta bara eliminar archivos corruptos en los paqutes
+npm install			//para reinstalar todos los comandos despues de haber borrado la carpeta
 
+//para hacer un borrado de los modulos de node tambien se puede asi
+sudo npm i -g rimraf		//instalar en modo global rimraf
+rimraf node_modulos		//borra los paquetes
+
+******************************************************************************************************************
+//vulnerabilidades de seguridad
+
+nmp audit				//bisqueda de vulnerabilidades de seguridad
+npm audit --json			//salida en json
+
+npm update eslint-utils --depth 2	//al encontrar vulnerabilidades actualizar el paquete con sus dependencias 
+					//a una profundidad dos
+					
+npm audit fix				//ayuda a reparar todas las vulnerabilidades juntas y no de una por una como el 
+					//comando anterior 
+					
+//El proyecto snyk.io : es un proyecto que se enfoca en analizar la seguiridad de tus proyectos
+
+******************************************************************************************************************
